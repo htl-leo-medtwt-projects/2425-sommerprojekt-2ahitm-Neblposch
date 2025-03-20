@@ -22,6 +22,12 @@ body{
     font-size: 8vh;
 }
 
+.container > span:hover{
+    color: #f00;
+    cursor: pointer;
+}
+
+
 .container{
     position: absolute;
     left: 10vw;

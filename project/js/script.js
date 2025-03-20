@@ -1,0 +1,3 @@
+function exitpage(){
+    window.close();
+}
