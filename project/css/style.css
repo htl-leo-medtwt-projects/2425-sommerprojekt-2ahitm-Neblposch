@@ -1,0 +1,34 @@
+@font-face {
+    font-family: 'BlodyHills';
+    font-style: normal;
+    font-weight: 400;
+    src: url(./../assets/fonts/BloodyHills.ttf);
+}
+
+body{
+    font-family: 'BlodyHills', serif;
+    background-color: #000;
+    color: #fff;
+}
+
+.title{
+    font-size: 19vh;
+    position: absolute;
+    left: 10vw;
+    top: 15vh;
+}
+
+.container > span{
+    font-size: 8vh;
+}
+
+.container{
+    position: absolute;
+    left: 10vw;
+    top: 40vh;
+    width: 30vw;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
