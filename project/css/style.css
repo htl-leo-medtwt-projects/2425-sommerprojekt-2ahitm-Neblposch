@@ -16,14 +16,16 @@ body{
     position: absolute;
     left: 10vw;
     top: 15vh;
+    pointer-events: none;
 }
 
 .container > span{
+    color: #aaa;
     font-size: 8vh;
 }
 
 .container > span:hover{
-    color: #f00;
+    color: #fff;
     cursor: pointer;
 }
 
@@ -32,7 +34,7 @@ body{
     position: absolute;
     left: 10vw;
     top: 40vh;
-    width: 30vw;
+    width: 20vw;
     height: 50vh;
     display: flex;
     flex-direction: column;
