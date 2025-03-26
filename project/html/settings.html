@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../js/script.js" defer></script>
+    <title>Eden's Dawn</title>
+</head>
+<body onload="loadFirstPage()">
+<hr id="SettingsLine">
+
+<div id="settingsMenu">
+    <span id="settingsHead">Settings</span>
+    <div id="settingsMenuContent">
+        <span class="settingsOption" onclick="settingsPage(1, this)">Gameplay</span>
+        <span class="settingsOption" onclick="settingsPage(2, this)">Video</span>
+        <span class="settingsOption" onclick="settingsPage(3, this)">Audio</span>
+    </div>
+</div>
+
+<div class="settingsPages" id="Gameplay">
+    <!-- From Uiverse.io by Nawsome -->
+
+</div>
+
+<div class="settingsPages" id="Video">
+    <div class="settingsPagesContent">
+        <span class Text>Fullscreen</span>
+
+        <label onclick="toggleFullscreen()" class="switch">
+            <input type="checkbox" checked="checked">
+            <div class="button">
+                <div class="light"></div>
+                <div class="dots"></div>
+                <div class="characters"></div>
+                <div class="shine"></div>
+                <div class="shadow"></div>
+            </div>
+        </label>
+    </div>
+</div>
+
+<div class="settingsPages" id="Audio"></div>
+
+</body>
+</html>
