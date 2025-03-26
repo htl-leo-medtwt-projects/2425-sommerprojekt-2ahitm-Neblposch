@@ -107,17 +107,34 @@ body{
     position: absolute;
     right: 0;
     top: 10vh;
-    width: 60dvw;
+    width: 70dvw;
     height: 90vh;
     display: none;
     color: white;
+    font-size: 8vh;
 }
 
 .settingsPagesContent{
-    background-color: red;
     top: 10vh;
-    width: 20vw;
+    width: 60vw;
     height: 90vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#backToHome{
+    position: absolute;
+    left: 2vw;
+    bottom: 10vh;
+    font-size: 3vh;
+    color: #aaa;
+    text-decoration: none;
+}
+
+#backToHome:hover{
+    color: white;
 }
 
 /*Switches*/

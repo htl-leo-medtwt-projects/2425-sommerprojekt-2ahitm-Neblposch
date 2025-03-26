@@ -47,4 +47,3 @@ function toggleFullscreen() {
         document.exitFullscreen();
     }
 }
-
