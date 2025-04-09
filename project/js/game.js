@@ -3,11 +3,9 @@ const engine = new BABYLON.Engine(canvas, true);
 const scene = new BABYLON.Scene(engine);
 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
-// Turn off any environmental lighting
 scene.environmentTexture = null;
 scene.environmentIntensity = 0;
 
-// Input
 const KEYS = { 'w': 87, 'a': 65, 's': 83, 'd': 68 };
 
 class InputController {
@@ -86,7 +84,6 @@ class FirstPersonCamera {
     }
 }
 
-// Camera setup
 const camera = new BABYLON.UniversalCamera("fpsCamera", new BABYLON.Vector3(0, 1.7, 0), scene);
 camera.attachControl(canvas, false);
 camera.speed = 0;
@@ -94,12 +91,11 @@ camera.inputs.clear();
 
 let brightnessFirstRoom = 7;
 
-// Lighting (turned off)
 const light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
 light.diffuse = new BABYLON.Color3(0, 0, 0);
 light.specular = new BABYLON.Color3(1, 0, 0);
 light.groundColor = new BABYLON.Color3(0, 0, 0);
-light.intensity = 0; // << this is key!
+light.intensity = 0;
 
 
 const pointLight1 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -2.7), scene);
@@ -107,22 +103,18 @@ pointLight1.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
 pointLight1.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
 pointLight1.intensity = brightnessFirstRoom; // Adjust intensity as needed
 
-// Add a green point light
 const pointLight2 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -0.5), scene);
 pointLight2.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
 pointLight2.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
 pointLight2.intensity = brightnessFirstRoom; // Adjust intensity as needed
 
 
-// Add a green point light
 const pointLight3 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 1.5), scene);
 pointLight3.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
 pointLight3.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
 pointLight3.intensity = brightnessFirstRoom; // Adjust intensity as needed
 
 
-
-// Add a green point light
 const pointLight4 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 3.5), scene);
 pointLight4.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
 pointLight4.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights

@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'BlodyHills';
+    font-style: normal;
+    font-weight: 400;
+    src: url(./../assets/fonts/BloodyHills.ttf);
+}
+
 body {
     margin: 0;
     font-family: "Montserrat", sans-serif;
@@ -33,4 +40,46 @@ canvas {
     width: 10vw;
     height: 3vh;
     z-index: 1000;
+}
+
+#action{
+    position: absolute;
+    top: 50vh;
+    right: 15vw;
+    color: #2c2c2c;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: xxx-large;
+    width: 11vw;
+    height: 5vh;
+    z-index: 1000;
+    border-radius: 0.1em;
+    font-family: 'BlodyHills', serif;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: row;
+
+}
+
+#ESign{
+    border: solid 4px black;
+    width: 5vh;
+    text-align: center;
+    scale: 70%;
+    margin-top: -0.1vh;
+    font-weight: bolder;
+}
+
+
+#gameOverlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    display: none;
+    z-index: 1001;
 }
