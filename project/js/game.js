@@ -1,3 +1,5 @@
+import roomData from './../data/roomData.js';
+
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 const scene = new BABYLON.Scene(engine);
@@ -33,6 +35,8 @@ class InputController {
 class FirstPersonCamera {
     constructor(camera, scene) {
         this.camera = camera;
+        camera.minZ = 0.01; // default is 1, lower values let the camera get closer
+
         this.scene = scene;
         this.input = new InputController();
         this.phi = 0;
@@ -65,10 +69,16 @@ class FirstPersonCamera {
 
         if (!this.velocity.equals(BABYLON.Vector3.Zero())) {
             this.velocity = this.velocity.normalize().scale(this.speed);
-            this.camera.position.addInPlace(this.velocity);
 
-            this.time += deltaTime;
-            this.camera.position.y = this.originalY + Math.sin(this.time * this.bobbingSpeed) * this.bobbingAmount;
+            const nextPosition = this.camera.position.add(this.velocity);
+
+            // Check for collisions before updating the position
+            if (!checkCollision(this.camera.position, nextPosition)) {
+                this.camera.position.addInPlace(this.velocity);
+
+                this.time += deltaTime;
+                this.camera.position.y = this.originalY + Math.sin(this.time * this.bobbingSpeed) * this.bobbingAmount;
+            }
         }
 
         const lookDir = new BABYLON.Vector3(
@@ -97,32 +107,25 @@ light.specular = new BABYLON.Color3(1, 0, 0);
 light.groundColor = new BABYLON.Color3(0, 0, 0);
 light.intensity = 0;
 
-
 const pointLight1 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -2.7), scene);
-pointLight1.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
-pointLight1.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
-pointLight1.intensity = brightnessFirstRoom; // Adjust intensity as needed
+pointLight1.diffuse = new BABYLON.Color3(1, 0, 0);
+pointLight1.specular = new BABYLON.Color3(0, 1, 0);
+pointLight1.intensity = brightnessFirstRoom;
 
 const pointLight2 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -0.5), scene);
-pointLight2.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
-pointLight2.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
-pointLight2.intensity = brightnessFirstRoom; // Adjust intensity as needed
-
+pointLight2.diffuse = new BABYLON.Color3(1, 0, 0);
+pointLight2.specular = new BABYLON.Color3(0, 1, 0);
+pointLight2.intensity = brightnessFirstRoom;
 
 const pointLight3 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 1.5), scene);
-pointLight3.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
-pointLight3.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
-pointLight3.intensity = brightnessFirstRoom; // Adjust intensity as needed
-
+pointLight3.diffuse = new BABYLON.Color3(1, 0, 0);
+pointLight3.specular = new BABYLON.Color3(0, 1, 0);
+pointLight3.intensity = brightnessFirstRoom;
 
 const pointLight4 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 3.5), scene);
-pointLight4.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
-pointLight4.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
-pointLight4.intensity = brightnessFirstRoom; // Adjust intensity as needed
-
-
-
-
+pointLight4.diffuse = new BABYLON.Color3(1, 0, 0);
+pointLight4.specular = new BABYLON.Color3(0, 1, 0);
+pointLight4.intensity = brightnessFirstRoom;
 
 // Load GLB
 BABYLON.SceneLoader.Append("./../3d_assets/", "Room1V1.glb", scene, function () {
@@ -160,3 +163,22 @@ engine.runRenderLoop(() => {
 
     scene.render();
 });
+
+function checkCollision(playerPosition, nextPosition) {
+    for (const room of roomData.rooms) {
+        for (const wall of room.walls) {
+            if (wall.axis === "x") {
+                // Check if the player crosses the x-axis boundary
+                if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
+                    return true;
+                }
+            } else if (wall.axis === "z") {
+                // Check if the player crosses the z-axis boundary
+                if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
