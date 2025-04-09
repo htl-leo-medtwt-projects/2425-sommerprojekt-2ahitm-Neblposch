@@ -35,7 +35,7 @@ class InputController {
 class FirstPersonCamera {
     constructor(camera, scene) {
         this.camera = camera;
-        camera.minZ = 0.01; // default is 1, lower values let the camera get closer
+        camera.minZ = 0.01;
 
         this.scene = scene;
         this.input = new InputController();
@@ -72,7 +72,6 @@ class FirstPersonCamera {
 
             const nextPosition = this.camera.position.add(this.velocity);
 
-            // Check for collisions before updating the position
             if (!checkCollision(this.camera.position, nextPosition)) {
                 this.camera.position.addInPlace(this.velocity);
 
@@ -132,6 +131,42 @@ BABYLON.SceneLoader.Append("./../3d_assets/", "Room1V1.glb", scene, function () 
     if (scene.environmentHelper) scene.environmentHelper.dispose();
 });
 
+
+// Post-process effects
+const pipeline = new BABYLON.DefaultRenderingPipeline(
+    "defaultPipeline",
+    true, // Enable HDR
+    scene,
+    [camera] // Apply to the camera
+);
+
+// Motion Blur
+pipeline.motionBlurEnabled = true;
+pipeline.motionBlurSamples = 16; // Reasonable value
+pipeline.motionBlurStrength = 1.0;
+
+// Depth of Field
+pipeline.depthOfFieldEnabled = true;
+pipeline.depthOfField.focalLength = 10;
+pipeline.depthOfField.focusDistance = 600;
+pipeline.depthOfField.fStop = 1.4;
+pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
+
+// Vignette
+pipeline.imageProcessingEnabled = true;
+pipeline.imageProcessing.vignetteEnabled = true;
+pipeline.imageProcessing.vignetteWeight = 1.5;
+pipeline.imageProcessing.vignetteColor = new BABYLON.Color4(0, 0, 0, 1);
+pipeline.imageProcessing.vignetteBlendMode = BABYLON.ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY;
+
+// Anti-Aliasing (MSAA)
+pipeline.samples = 4; // Enable 4x MSAA
+
+// Anti-Aliasing (FXAA)
+const fxaa = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
+
+
+
 // Pointer lock
 canvas.addEventListener("click", () => {
     canvas.requestPointerLock();
@@ -144,7 +179,7 @@ window.addEventListener("resize", () => {
 
 const fpsCamera = new FirstPersonCamera(camera, scene);
 
-// Coordinates display (optional, requires a div with id="coordinates")
+// Coordinates display
 const coordinatesDiv = document.getElementById("coordinates");
 
 // Main render loop
@@ -168,12 +203,10 @@ function checkCollision(playerPosition, nextPosition) {
     for (const room of roomData.rooms) {
         for (const wall of room.walls) {
             if (wall.axis === "x") {
-                // Check if the player crosses the x-axis boundary
                 if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
                     return true;
                 }
             } else if (wall.axis === "z") {
-                // Check if the player crosses the z-axis boundary
                 if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
                     return true;
                 }
