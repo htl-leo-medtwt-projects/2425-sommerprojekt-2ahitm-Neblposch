@@ -1,8 +1,11 @@
-
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 const scene = new BABYLON.Scene(engine);
 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+
+// Turn off any environmental lighting
+scene.environmentTexture = null;
+scene.environmentIntensity = 0;
 
 // Input
 const KEYS = { 'w': 87, 'a': 65, 's': 83, 'd': 68 };
@@ -86,18 +89,53 @@ class FirstPersonCamera {
 // Camera setup
 const camera = new BABYLON.UniversalCamera("fpsCamera", new BABYLON.Vector3(0, 1.7, 0), scene);
 camera.attachControl(canvas, false);
-camera.speed = 0; // We'll handle speed ourselves
-camera.inputs.clear(); // Remove default input handling
+camera.speed = 0;
+camera.inputs.clear();
 
-// Lighting
-const light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 0, 0), scene);
-light.diffuse = new BABYLON.Color3(1, 0, 0); // Set the light color to red
-light.specular = new BABYLON.Color3(1, 1, 1); // Specular highlights
-light.groundColor = new BABYLON.Color3(0.2, 0.2, 0.2); // Light reflected from the ground
+let brightnessFirstRoom = 7;
+
+// Lighting (turned off)
+const light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+light.diffuse = new BABYLON.Color3(0, 0, 0);
+light.specular = new BABYLON.Color3(1, 0, 0);
+light.groundColor = new BABYLON.Color3(0, 0, 0);
+light.intensity = 0; // << this is key!
+
+
+const pointLight1 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -2.7), scene);
+pointLight1.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
+pointLight1.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
+pointLight1.intensity = brightnessFirstRoom; // Adjust intensity as needed
+
+// Add a green point light
+const pointLight2 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -0.5), scene);
+pointLight2.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
+pointLight2.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
+pointLight2.intensity = brightnessFirstRoom; // Adjust intensity as needed
+
+
+// Add a green point light
+const pointLight3 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 1.5), scene);
+pointLight3.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
+pointLight3.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
+pointLight3.intensity = brightnessFirstRoom; // Adjust intensity as needed
+
+
+
+// Add a green point light
+const pointLight4 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 3.5), scene);
+pointLight4.diffuse = new BABYLON.Color3(1, 0, 0); // Green light
+pointLight4.specular = new BABYLON.Color3(0, 1, 0); // Green specular highlights
+pointLight4.intensity = brightnessFirstRoom; // Adjust intensity as needed
+
+
+
 
 
 // Load GLB
-BABYLON.SceneLoader.Append("./../3d_assets/", "Room1V1.glb", scene);
+BABYLON.SceneLoader.Append("./../3d_assets/", "Room1V1.glb", scene, function () {
+    if (scene.environmentHelper) scene.environmentHelper.dispose();
+});
 
 // Pointer lock
 canvas.addEventListener("click", () => {
@@ -111,7 +149,10 @@ window.addEventListener("resize", () => {
 
 const fpsCamera = new FirstPersonCamera(camera, scene);
 
-// Render loop
+// Coordinates display (optional, requires a div with id="coordinates")
+const coordinatesDiv = document.getElementById("coordinates");
+
+// Main render loop
 let previousTime = performance.now();
 engine.runRenderLoop(() => {
     const currentTime = performance.now();
@@ -119,5 +160,11 @@ engine.runRenderLoop(() => {
     previousTime = currentTime;
 
     fpsCamera.update(deltaTime);
+
+    if (coordinatesDiv) {
+        const playerPosition = camera.position;
+        coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}`;
+    }
+
     scene.render();
 });
