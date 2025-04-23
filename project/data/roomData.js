@@ -7,6 +7,10 @@ const roomData = {
                 { axis: "x", distance: 2.5}, // Right wall
                 { axis: "z", distance: -3.8 }, // Top wall
                 { axis: "z", distance: 3.4 }  // Bottom wall
+            ],
+            actions: [
+                {name : "Paper", id: 409, output: "Look at"},
+                {name : "Door", id: 37, output: "open"}
             ]
         },
         {

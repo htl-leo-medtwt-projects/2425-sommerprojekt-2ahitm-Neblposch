@@ -41,10 +41,10 @@ class FirstPersonCamera {
         this.input = new InputController();
         this.phi = 0;
         this.theta = 0;
-        this.speed = 0.02;
+        this.speed = 0.005;
         this.velocity = new BABYLON.Vector3();
         this.bobbingSpeed = 14;
-        this.bobbingAmount = 0.05;
+        this.bobbingAmount = 0.03;
         this.time = 0;
         this.originalY = this.camera.position.y;
     }
@@ -99,12 +99,13 @@ camera.speed = 0;
 camera.inputs.clear();
 
 let brightnessFirstRoom = 7;
+let overallBrightness = 0.05;
 
-const light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
-light.diffuse = new BABYLON.Color3(0, 0, 0);
+const light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 0, 0), scene);
+light.diffuse = new BABYLON.Color3(1, 1, 1);
 light.specular = new BABYLON.Color3(1, 0, 0);
 light.groundColor = new BABYLON.Color3(0, 0, 0);
-light.intensity = 0;
+light.intensity = overallBrightness;
 
 const pointLight1 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -2.7), scene);
 pointLight1.diffuse = new BABYLON.Color3(1, 0, 0);
@@ -131,7 +132,6 @@ BABYLON.SceneLoader.Append("./../3d_assets/", "Room1V1.glb", scene, function () 
     if (scene.environmentHelper) scene.environmentHelper.dispose();
 });
 
-
 // Post-process effects
 const pipeline = new BABYLON.DefaultRenderingPipeline(
     "defaultPipeline",
@@ -140,10 +140,13 @@ const pipeline = new BABYLON.DefaultRenderingPipeline(
     [camera] // Apply to the camera
 );
 
-// Motion Blur
-pipeline.motionBlurEnabled = true;
-pipeline.motionBlurSamples = 16; // Reasonable value
-pipeline.motionBlurStrength = 1.0;
+var motionblur = new BABYLON.MotionBlurPostProcess(
+    "mb", // The name of the effect.
+    scene, // The scene containing the objects to blur according to their velocity.
+    1.0, // The required width/height ratio to downsize to before computing the render pass.
+    camera // The camera to apply the render pass to.
+);
+
 
 // Depth of Field
 pipeline.depthOfFieldEnabled = true;
@@ -165,8 +168,6 @@ pipeline.samples = 4; // Enable 4x MSAA
 // Anti-Aliasing (FXAA)
 const fxaa = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
 
-
-
 // Pointer lock
 canvas.addEventListener("click", () => {
     canvas.requestPointerLock();
@@ -181,6 +182,8 @@ const fpsCamera = new FirstPersonCamera(camera, scene);
 
 // Coordinates display
 const coordinatesDiv = document.getElementById("coordinates");
+const actionDiv = document.getElementById("action");
+const gameOverlay = document.getElementById("gameOverlay");
 
 // Main render loop
 let previousTime = performance.now();
@@ -194,6 +197,25 @@ engine.runRenderLoop(() => {
     if (coordinatesDiv) {
         const playerPosition = camera.position;
         coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}`;
+    }
+
+    // Proximity detection for the paper in room1
+    const paperAction = roomData.rooms[0].actions.find(action => action.name === "Paper");
+    const paperPosition = new BABYLON.Vector3(0, 1.7, 0); // Replace with the actual position of the paper
+    const distanceToPaper = BABYLON.Vector3.Distance(camera.position, paperPosition);
+
+    if (distanceToPaper < 2) { // Adjust the distance threshold as needed
+        actionDiv.style.display = "flex";
+        actionDiv.innerText = paperAction.output;
+
+        // Listen for the "E" key to display the game overlay
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "e" || e.key === "E") {
+                gameOverlay.style.display = "block";
+            }
+        });
+    } else {
+        actionDiv.style.display = "none";
     }
 
     scene.render();
@@ -215,3 +237,64 @@ function checkCollision(playerPosition, nextPosition) {
     }
     return false;
 }
+
+const ray = new BABYLON.Ray();
+const rayHelper = new BABYLON.RayHelper(ray);
+
+engine.runRenderLoop(() => {
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - previousTime) / 1000;
+    previousTime = currentTime;
+
+    fpsCamera.update(deltaTime);
+
+    if (coordinatesDiv) {
+        const playerPosition = camera.position;
+        coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}`;
+
+        // Raycasting logic
+        const forward = camera.getForwardRay();
+        ray.origin = forward.origin;
+        ray.direction = forward.direction;
+
+        const hit = scene.pickWithRay(ray);
+        if (hit.pickedMesh) {
+            coordinatesDiv.innerText += `, Looking at Mesh ID: ${hit.pickedMesh.uniqueId}`;
+        } else {
+            coordinatesDiv.innerText += `, Looking at: None`;
+        }
+    }
+
+    scene.render();
+});
+
+engine.runRenderLoop(() => {
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - previousTime) / 1000;
+    previousTime = currentTime;
+
+    fpsCamera.update(deltaTime);
+
+    if (coordinatesDiv) {
+        const playerPosition = camera.position;
+
+        // Raycasting logic
+        const forward = camera.getForwardRay();
+        ray.origin = forward.origin;
+        ray.direction = forward.direction;
+
+        const hit = scene.pickWithRay(ray);
+        let lookingAt = "Looking at: None";
+        let distanceToMesh = "Distance: N/A";
+
+        if (hit.pickedMesh) {
+            lookingAt = `Looking at Mesh ID: ${hit.pickedMesh.uniqueId}`;
+            distanceToMesh = `Distance: ${BABYLON.Vector3.Distance(playerPosition, hit.pickedPoint).toFixed(2)}`;
+        }
+
+        // Update coordinates div
+        coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}, ${lookingAt}, ${distanceToMesh}`;
+    }
+
+    scene.render();
+});
