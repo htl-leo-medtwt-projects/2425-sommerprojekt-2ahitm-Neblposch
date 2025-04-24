@@ -163,7 +163,7 @@ pipeline.imageProcessing.vignetteColor = new BABYLON.Color4(0, 0, 0, 1);
 pipeline.imageProcessing.vignetteBlendMode = BABYLON.ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY;
 
 // Anti-Aliasing (MSAA)
-pipeline.samples = 4; // Enable 4x MSAA
+pipeline.samples = 16; // Enable 4x MSAA
 
 // Anti-Aliasing (FXAA)
 const fxaa = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
@@ -290,6 +290,30 @@ engine.runRenderLoop(() => {
         if (hit.pickedMesh) {
             lookingAt = `Looking at Mesh ID: ${hit.pickedMesh.uniqueId}`;
             distanceToMesh = `Distance: ${BABYLON.Vector3.Distance(playerPosition, hit.pickedPoint).toFixed(2)}`;
+
+            // Check if the object is in roomData and within distance
+            const distance = BABYLON.Vector3.Distance(playerPosition, hit.pickedPoint);
+            if (distance < 1.8) {
+                let actionFound = false; // Track if an action is found
+                for (const room of roomData.rooms) {
+                    if (room.actions) { // Check if the room has actions
+                        const action = room.actions.find(a => a.id === hit.pickedMesh.uniqueId);
+                        if (action) {
+                            actionDiv.style.display = "flex";
+                            actionDiv.innerHTML = `<div id="ESign">E</div>${action.output}`;
+                            actionFound = true;
+                            break;
+                        }
+                    }
+                }
+                if (!actionFound) {
+                    actionDiv.style.display = "none"; // Hide if no matching action is found
+                }
+            } else {
+                actionDiv.style.display = "none"; // Hide if distance is greater than 1.8
+            }
+        } else {
+            actionDiv.style.display = "none";
         }
 
         // Update coordinates div

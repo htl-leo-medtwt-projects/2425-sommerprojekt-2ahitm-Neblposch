@@ -10,6 +10,7 @@ const roomData = {
             ],
             actions: [
                 {name : "Paper", id: 409, output: "Look at"},
+                {name : "Door", id: 39, output: "open"},
                 {name : "Door", id: 37, output: "open"}
             ]
         },
