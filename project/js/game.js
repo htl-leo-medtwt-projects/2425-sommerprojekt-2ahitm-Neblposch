@@ -187,6 +187,8 @@ const gameOverlay = document.getElementById("gameOverlay");
 
 // Main render loop
 let previousTime = performance.now();
+
+// Proximity detection and interaction logic
 engine.runRenderLoop(() => {
     const currentTime = performance.now();
     const deltaTime = (currentTime - previousTime) / 1000;
@@ -197,41 +199,29 @@ engine.runRenderLoop(() => {
     if (coordinatesDiv) {
         const playerPosition = camera.position;
         coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}`;
-    }
 
-    // Proximity detection for the paper in room1
-    const paperAction = roomData.rooms[0].actions.find(action => action.name === "Paper");
-    const paperPosition = new BABYLON.Vector3(0, 1.7, 0); // Replace with the actual position of the paper
-    const distanceToPaper = BABYLON.Vector3.Distance(camera.position, paperPosition);
 
-    if (distanceToPaper < 2) { // Adjust the distance threshold as needed
-        actionDiv.style.display = "flex";
-        actionDiv.innerText = paperAction.output;
-
-        // Listen for the "E" key to display the game overlay
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "e" || e.key === "E") {
-                gameOverlay.style.display = "block";
-            }
-        });
-    } else {
-        actionDiv.style.display = "none";
     }
 
     scene.render();
 });
 
+
+let currentWalls = [
+    { axis: "x", distance: -2.5},  // Left wall
+    { axis: "x", distance: 2.5}, // Right wall
+    { axis: "z", distance: -3.8 }, // Top wall
+    { axis: "z", distance: 3.4 }]; // Store the current room's walls
+
 function checkCollision(playerPosition, nextPosition) {
-    for (const room of roomData.rooms) {
-        for (const wall of room.walls) {
-            if (wall.axis === "x") {
-                if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
-                    return true;
-                }
-            } else if (wall.axis === "z") {
-                if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
-                    return true;
-                }
+    for (const wall of currentWalls) {
+        if (wall.axis === "x") {
+            if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
+                return true;
+            }
+        } else if (wall.axis === "z") {
+            if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
+                return true;
             }
         }
     }
@@ -302,6 +292,52 @@ engine.runRenderLoop(() => {
                             actionDiv.style.display = "flex";
                             actionDiv.innerHTML = `<div id="ESign">E</div>${action.output}`;
                             actionFound = true;
+
+
+                            document.addEventListener("keydown", handleKeyDown);
+
+                            function handleKeyDown(e) {
+                                if (e.key === "e" || e.key === "E") {
+                                    const forward = camera.getForwardRay();
+                                    const hit = scene.pickWithRay(forward);
+
+                                    if (hit.pickedMesh) {
+                                        const pickedId = hit.pickedMesh.uniqueId;
+
+                                        for (const room of roomData.rooms) {
+                                            if (room.actions) {
+                                                const action = room.actions.find(a => a.id === pickedId);
+
+                                                if (action) {
+                                                    switch (action.name) {
+                                                        case "Paper":
+                                                            gameOverlay.style.display = "flex";
+                                                            gameOverlay.innerHTML = `<img src="${action.image}" alt="${action.name}" style="height: 80vh" />`;
+                                                            break;
+
+                                                        case "Door":
+                                                            loadRoom("room2");
+                                                            break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+// Close the popup when clicking on it
+                            gameOverlay.addEventListener("click", () => {
+                                gameOverlay.style.display = "none";
+                                gameOverlay.innerHTML = "";
+                            });
+
+// Close the popup when clicking outside or pressing a key
+                            gameOverlay.addEventListener("click", () => {
+                                gameOverlay.style.display = "none";
+                                gameOverlay.innerHTML = "";
+                            });
+
                             break;
                         }
                     }
@@ -322,3 +358,45 @@ engine.runRenderLoop(() => {
 
     scene.render();
 });
+
+function loadRoom(roomId) {
+    // Find the room by ID in roomData
+    const room = roomData.rooms.find(r => r.id === roomId);
+
+    if (!room) {
+        console.error(`Room with ID ${roomId} not found.`);
+        return;
+    }
+
+    if (!room.model) {
+        console.error(`No model defined for room with ID ${roomId}.`);
+        return;
+    }
+
+    // Remove all current meshes from the scene
+    scene.meshes.forEach(mesh => {
+        if (mesh.name !== "fpsCamera") {
+            mesh.dispose();
+        }
+    });
+
+    // Load the model for the room
+    BABYLON.SceneLoader.Append("./../3d_assets/", room.model, scene, function () {
+        console.log(`Model ${room.model} for room ${roomId} loaded.`);
+
+        // Update wall collision data
+        updateCollisions(room.walls);
+    });
+}
+
+function updateCollisions(walls) {
+    // Clear existing collision data
+    currentWalls = [];
+
+    // Add new wall collision data
+    walls.forEach(wall => {
+        currentWalls.push(wall);
+    });
+
+    console.log("Collision data updated:", currentWalls);
+}

@@ -82,6 +82,7 @@ canvas {
     align-items: center;
     display: none;
     z-index: 1001;
+
 }
 
 #crosshair {
