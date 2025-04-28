@@ -41,7 +41,7 @@ class FirstPersonCamera {
         this.input = new InputController();
         this.phi = 0;
         this.theta = 0;
-        this.speed = 0.005;
+        this.speed = 0.015;
         this.velocity = new BABYLON.Vector3();
         this.bobbingSpeed = 14;
         this.bobbingAmount = 0.03;
@@ -316,7 +316,7 @@ engine.runRenderLoop(() => {
                                                             break;
 
                                                         case "Door":
-                                                            loadRoom("room2");
+                                                            loadRoom(action.goal);
                                                             break;
                                                     }
                                                 }
@@ -399,4 +399,73 @@ function updateCollisions(walls) {
     });
 
     console.log("Collision data updated:", currentWalls);
+}
+
+
+class LoadingScreen {
+    constructor(engine, scene) {
+        this.engine = engine;
+        this.scene = scene;
+        this.loadingDiv = document.getElementById("loadingScreen");
+
+        if (!this.loadingDiv) {
+            // Create a simple loading div if it doesn't exist
+            this.loadingDiv = document.createElement("div");
+            this.loadingDiv.id = "loadingScreen";
+            this.loadingDiv.style.position = "absolute";
+            this.loadingDiv.style.top = "0";
+            this.loadingDiv.style.left = "0";
+            this.loadingDiv.style.width = "100%";
+            this.loadingDiv.style.height = "100%";
+            this.loadingDiv.style.backgroundColor = "black";
+            this.loadingDiv.style.color = "white";
+            this.loadingDiv.style.display = "flex";
+            this.loadingDiv.style.alignItems = "center";
+            this.loadingDiv.style.justifyContent = "center";
+            this.loadingDiv.style.fontSize = "2em";
+            this.loadingDiv.style.zIndex = "9999";
+            this.loadingDiv.innerText = "Loading...";
+            document.body.appendChild(this.loadingDiv);
+        }
+    }
+
+    show() {
+        this.loadingDiv.style.display = "flex";
+    }
+
+    hide() {
+        this.loadingDiv.style.display = "none";
+    }
+
+    trackAssets() {
+        this.assetsManager = new BABYLON.AssetsManager(this.scene);
+
+        // Example task (you can add more tasks to load your assets)
+        const meshTask = this.assetsManager.addMeshTask(
+            "loadRoom",
+            "",
+            "./../3d_assets/",
+            "Room1V1.glb"
+        );
+
+        meshTask.onSuccess = (task) => {
+            if (this.scene.environmentHelper) this.scene.environmentHelper.dispose();
+        };
+
+        meshTask.onError = (task, message, exception) => {
+            console.error("Failed to load asset", message, exception);
+        };
+
+        this.assetsManager.onFinish = () => {
+            this.hide();
+            this.scene.executeWhenReady(() => {
+                this.engine.runRenderLoop(() => {
+                    this.scene.render();
+                });
+            });
+        };
+
+        this.show();
+        this.assetsManager.load();
+    }
 }
