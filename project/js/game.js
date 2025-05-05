@@ -93,6 +93,9 @@ class FirstPersonCamera {
     }
 }
 
+let currentRoom = null; // Global variable to store the current room's JSON
+loadRoom("room1"); // Load the initial room
+
 const camera = new BABYLON.UniversalCamera("fpsCamera", new BABYLON.Vector3(0, 1.7, 0), scene);
 camera.attachControl(canvas, false);
 camera.speed = 0;
@@ -127,10 +130,6 @@ pointLight4.diffuse = new BABYLON.Color3(1, 0, 0);
 pointLight4.specular = new BABYLON.Color3(0, 1, 0);
 pointLight4.intensity = brightnessFirstRoom;
 
-// Load GLB
-BABYLON.SceneLoader.Append("./../3d_assets/", "Room1V1.glb", scene, function () {
-    if (scene.environmentHelper) scene.environmentHelper.dispose();
-});
 
 // Post-process effects
 const pipeline = new BABYLON.DefaultRenderingPipeline(
@@ -213,7 +212,78 @@ let currentWalls = [
     { axis: "z", distance: -3.8 }, // Top wall
     { axis: "z", distance: 3.4 }]; // Store the current room's walls
 
+let gate1 = false;
+let gate2 = false;
+
 function checkCollision(playerPosition, nextPosition) {
+    if (currentRoom.id === "room2") {
+        gate1 = playerPosition.z >= 8;
+        gate2 = playerPosition.x <= -2;
+
+        if(gate1 === false && gate2 === false){
+
+            console.error("wallset1");
+            for (const wall of currentRoom.wallset1) {
+                if (wall.axis === "x") {
+                    if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
+                        return true;
+                    }
+                } else if (wall.axis === "z") {
+                    if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }else if (gate2 === false && gate1 === true){
+            console.error("wallset2");
+            for (const wall of currentRoom.wallset2) {
+                if (wall.axis === "x") {
+                    if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
+                        return true;
+                    }
+                } else if (wall.axis === "z") {
+                    if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }else if (gate2 === true && gate1 === true){
+
+            console.error("wallset3");
+            for (const wall of currentRoom.wallset3) {
+                if (wall.axis === "x") {
+                    if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
+                        return true;
+                    }
+                } else if (wall.axis === "z") {
+                    if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
+
+
+    }else{
+        for (const wall of currentWalls) {
+            if (wall.axis === "x") {
+                if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
+                    return true;
+                }
+            } else if (wall.axis === "z") {
+                if (Math.abs(nextPosition.z - wall.distance) < 0.5) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     for (const wall of currentWalls) {
         if (wall.axis === "x") {
             if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
@@ -359,6 +429,7 @@ engine.runRenderLoop(() => {
     scene.render();
 });
 
+
 function loadRoom(roomId) {
     // Find the room by ID in roomData
     const room = roomData.rooms.find(r => r.id === roomId);
@@ -367,6 +438,8 @@ function loadRoom(roomId) {
         console.error(`Room with ID ${roomId} not found.`);
         return;
     }
+
+    currentRoom = room; // Update the global variable with the current room's JSON
 
     if (!room.model) {
         console.error(`No model defined for room with ID ${roomId}.`);
@@ -384,10 +457,23 @@ function loadRoom(roomId) {
     BABYLON.SceneLoader.Append("./../3d_assets/", room.model, scene, function () {
         console.log(`Model ${room.model} for room ${roomId} loaded.`);
 
+        // If the room has a position attribute, adjust the model's position
+        if (room.position) {
+            scene.meshes.forEach(mesh => {
+                if (mesh.name !== "fpsCamera") {
+                    mesh.position.x += room.position.x || 0;
+                    mesh.position.y += room.position.y || 0;
+                    mesh.position.z += room.position.z || 0;
+                }
+            });
+        }
+
         // Update wall collision data
         updateCollisions(room.walls);
     });
 }
+
+
 
 function updateCollisions(walls) {
     // Clear existing collision data
