@@ -13,13 +13,6 @@ const roomData = {
                 {name : "Door", id: 39, output: "open", goal: "room2"},
                 {name : "Door", id: 37, output: "open",goal: "room2"}
             ],
-            lights: [
-                { name: "redPointLight1", position: [2.8, 3.3, -2.7] },
-                { name: "redPointLight2", position: [2.8, 3.3, -0.5] },
-                { name: "redPointLight3", position: [2.8, 3.3, 1.5] },
-                { name: "redPointLight4", position: [2.8, 3.3, 3.5] },
-
-            ],
 
             model: "./../3d_assets/room1V1.glb"
         },
@@ -47,7 +40,7 @@ const roomData = {
                 {name: "Door", id: 714, output: "open", goal: "room3",},
             ],
             model: "./../3d_assets/room2V1.glb",
-            position: { x: 0, y: 0, z: -2.5}
+            position: { x: 0, y: 0, z: 0}
         },
         {
             id: "room3",

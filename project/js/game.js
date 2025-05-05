@@ -457,16 +457,7 @@ function loadRoom(roomId) {
     BABYLON.SceneLoader.Append("./../3d_assets/", room.model, scene, function () {
         console.log(`Model ${room.model} for room ${roomId} loaded.`);
 
-        // If the room has a position attribute, adjust the model's position
-        if (room.position) {
-            scene.meshes.forEach(mesh => {
-                if (mesh.name !== "fpsCamera") {
-                    mesh.position.x += room.position.x || 0;
-                    mesh.position.y += room.position.y || 0;
-                    mesh.position.z += room.position.z || 0;
-                }
-            });
-        }
+
 
         // Update wall collision data
         updateCollisions(room.walls);
