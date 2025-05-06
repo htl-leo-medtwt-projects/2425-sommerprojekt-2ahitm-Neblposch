@@ -139,7 +139,7 @@ light.intensity = overallBrightness;
 
 let currentlightPosition;
 
-loadRoom("room2"); // Load the initial room
+loadRoom("room3"); // Load the initial room
 
 
 function reloadLights(){
@@ -173,7 +173,7 @@ pipeline.depthOfFieldEnabled = true;
 pipeline.depthOfField.focalLength = 10;
 pipeline.depthOfField.focusDistance = 600;
 pipeline.depthOfField.fStop = 1.4;
-pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
+pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.High;
 
 // Enable Vignette
 pipeline.imageProcessingEnabled = true;
@@ -204,7 +204,7 @@ pipeline.chromaticAberration.radialIntensity = 50.0;
 // Optionally add some blur noise manually
 // (Babylon doesn't have a direct setting called 'blur_noise', but you can simulate it with DOF + grain)
 pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.High;
-pipeline.grain.intensity = 60;
+pipeline.grain.intensity = 90;
 
 
 // Pointer lock
