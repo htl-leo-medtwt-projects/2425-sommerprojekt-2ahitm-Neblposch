@@ -46,11 +46,18 @@ const roomData = {
                 {name: "Door", id: 709, output: "open", goal: "room3",},
             ],
             lights: [
+                //first wall
                 {position: { x: 2.8, y: 3.3, z: -2.7 }, color: [0.8, 0.8, 0.8], intensity: 1},
                 {position: { x: 2.8, y: 3.3, z: -0.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
                 {position: { x: 2.8, y: 3.3, z: 1.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
                 {position: { x: 2.8, y: 3.3, z: 3.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
-                {position: { x: 2.8, y: 3.3, z: 6.8 }, color: [0.8, 0.8, 0.8], intensity: 1}
+                {position: { x: 2.8, y: 3.3, z: 6.8 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: 9.9 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: 12.9 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                //second wall
+                {position: { x: 2, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: -1, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: -3.7, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
             ],
             model: "./../3d_assets/room2V1.glb",
             position: { x: 0, y: 1.7, z: -2.2}

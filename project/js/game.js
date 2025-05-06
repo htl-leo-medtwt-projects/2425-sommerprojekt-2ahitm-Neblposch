@@ -2,6 +2,22 @@ import roomData from './../data/roomData.js';
 
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
+
+const customLoadingScreen = {
+    displayLoadingUI: function () {
+        document.getElementById("loadingScreen").style.display = "flex";
+    },
+    hideLoadingUI: function () {
+        document.getElementById("loadingScreen").style.display = "none";
+    }
+};
+
+// Set the custom loading screen
+engine.loadingScreen = customLoadingScreen;
+engine.loadingScreen.displayLoadingUI(); // manually show
+
+
+
 const scene = new BABYLON.Scene(engine);
 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
@@ -111,7 +127,7 @@ light.intensity = overallBrightness;
 
 let currentlightPosition;
 
-loadRoom("room1"); // Load the initial room
+loadRoom("room2"); // Load the initial room
 
 
 function reloadLights(){
@@ -229,7 +245,7 @@ function checkCollision(playerPosition, nextPosition) {
         gate1 = playerPosition.z >= 8;
         gate2 = playerPosition.x <= -2;
 
-        if(gate1 === false && gate2 === false){
+        if(gate1 === false && gate2 === false || gate1 === false && gate2 === true){
 
             for (const wall of currentRoom.wallset1) {
                 if (wall.axis === "x") {
@@ -492,73 +508,4 @@ function updateCollisions(walls) {
     });
 
     console.log("Collision data updated:", currentWalls);
-}
-
-
-class LoadingScreen {
-    constructor(engine, scene) {
-        this.engine = engine;
-        this.scene = scene;
-        this.loadingDiv = document.getElementById("loadingScreen");
-
-        if (!this.loadingDiv) {
-            // Create a simple loading div if it doesn't exist
-            this.loadingDiv = document.createElement("div");
-            this.loadingDiv.id = "loadingScreen";
-            this.loadingDiv.style.position = "absolute";
-            this.loadingDiv.style.top = "0";
-            this.loadingDiv.style.left = "0";
-            this.loadingDiv.style.width = "100%";
-            this.loadingDiv.style.height = "100%";
-            this.loadingDiv.style.backgroundColor = "black";
-            this.loadingDiv.style.color = "white";
-            this.loadingDiv.style.display = "flex";
-            this.loadingDiv.style.alignItems = "center";
-            this.loadingDiv.style.justifyContent = "center";
-            this.loadingDiv.style.fontSize = "2em";
-            this.loadingDiv.style.zIndex = "9999";
-            this.loadingDiv.innerText = "Loading...";
-            document.body.appendChild(this.loadingDiv);
-        }
-    }
-
-    show() {
-        this.loadingDiv.style.display = "flex";
-    }
-
-    hide() {
-        this.loadingDiv.style.display = "none";
-    }
-
-    trackAssets() {
-        this.assetsManager = new BABYLON.AssetsManager(this.scene);
-
-        // Example task (you can add more tasks to load your assets)
-        const meshTask = this.assetsManager.addMeshTask(
-            "loadRoom",
-            "",
-            "./../3d_assets/",
-            "Room1V1.glb"
-        );
-
-        meshTask.onSuccess = (task) => {
-            if (this.scene.environmentHelper) this.scene.environmentHelper.dispose();
-        };
-
-        meshTask.onError = (task, message, exception) => {
-            console.error("Failed to load asset", message, exception);
-        };
-
-        this.assetsManager.onFinish = () => {
-            this.hide();
-            this.scene.executeWhenReady(() => {
-                this.engine.runRenderLoop(() => {
-                    this.scene.render();
-                });
-            });
-        };
-
-        this.show();
-        this.assetsManager.load();
-    }
 }
