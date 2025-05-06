@@ -222,7 +222,6 @@ function checkCollision(playerPosition, nextPosition) {
 
         if(gate1 === false && gate2 === false){
 
-            console.error("wallset1");
             for (const wall of currentRoom.wallset1) {
                 if (wall.axis === "x") {
                     if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
@@ -236,7 +235,6 @@ function checkCollision(playerPosition, nextPosition) {
             }
             return false;
         }else if (gate2 === false && gate1 === true){
-            console.error("wallset2");
             for (const wall of currentRoom.wallset2) {
                 if (wall.axis === "x") {
                     if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
@@ -251,7 +249,6 @@ function checkCollision(playerPosition, nextPosition) {
             return false;
         }else if (gate2 === true && gate1 === true){
 
-            console.error("wallset3");
             for (const wall of currentRoom.wallset3) {
                 if (wall.axis === "x") {
                     if (Math.abs(nextPosition.x - wall.distance) < 0.5) {
@@ -429,7 +426,6 @@ engine.runRenderLoop(() => {
     scene.render();
 });
 
-
 function loadRoom(roomId) {
     // Find the room by ID in roomData
     const room = roomData.rooms.find(r => r.id === roomId);
@@ -452,15 +448,20 @@ function loadRoom(roomId) {
             mesh.dispose();
         }
     });
+    // Set camera position if the room has a position attribute
+    if (room.position) {
+        camera.position = new BABYLON.Vector3(room.position.x, room.position.y, room.position.z);
+        console.error(`Camera position set to: ${camera.position}`);
+    }
 
     // Load the model for the room
     BABYLON.SceneLoader.Append("./../3d_assets/", room.model, scene, function () {
         console.log(`Model ${room.model} for room ${roomId} loaded.`);
 
-
-
         // Update wall collision data
         updateCollisions(room.walls);
+
+
     });
 }
 
