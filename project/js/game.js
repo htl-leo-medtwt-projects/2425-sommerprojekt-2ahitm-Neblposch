@@ -131,6 +131,7 @@ pointLight4.specular = new BABYLON.Color3(0, 1, 0);
 pointLight4.intensity = brightnessFirstRoom;
 
 
+/*
 // Post-process effects
 const pipeline = new BABYLON.DefaultRenderingPipeline(
     "defaultPipeline",
@@ -145,7 +146,6 @@ var motionblur = new BABYLON.MotionBlurPostProcess(
     1.0, // The required width/height ratio to downsize to before computing the render pass.
     camera // The camera to apply the render pass to.
 );
-
 
 // Depth of Field
 pipeline.depthOfFieldEnabled = true;
@@ -166,6 +166,54 @@ pipeline.samples = 16; // Enable 4x MSAA
 
 // Anti-Aliasing (FXAA)
 const fxaa = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
+*/
+
+// Create the default rendering pipeline
+const pipeline = new BABYLON.DefaultRenderingPipeline(
+    "defaultPipeline",
+    true, // Enable HDR
+    scene,
+    [camera] // Attach to camera
+);
+
+// Enable Depth of Field
+pipeline.depthOfFieldEnabled = true;
+pipeline.depthOfField.focalLength = 10;
+pipeline.depthOfField.focusDistance = 600;
+pipeline.depthOfField.fStop = 1.4;
+pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
+
+// Enable Vignette
+pipeline.imageProcessingEnabled = true;
+pipeline.imageProcessing.vignetteEnabled = true;
+pipeline.imageProcessing.vignetteWeight = 9;
+pipeline.imageProcessing.vignetteColor = new BABYLON.Color4(0, 0, 0, 1);
+pipeline.imageProcessing.vignetteBlendMode = BABYLON.ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY;
+
+// Enable FXAA Anti-Aliasing
+pipeline.fxaaEnabled = true;
+
+// Enable Grain
+pipeline.grainEnabled = true;
+pipeline.grain.intensity = 1.0;
+
+// Enable MSAA (Multisample Anti-Aliasing)
+pipeline.samples = 16;
+
+// Enable Edge Blur (use DOF with appropriate settings)
+pipeline.depthOfField.edgeBlur = 1; // 0 to 1, higher means stronger blur at edges
+
+// Enable Chromatic Aberration
+pipeline.chromaticAberrationEnabled = true;
+pipeline.chromaticAberration.aberrationAmount = 100; // Higher = more distortion
+pipeline.chromaticAberration.radialIntensity = 50.0;
+
+
+// Optionally add some blur noise manually
+// (Babylon doesn't have a direct setting called 'blur_noise', but you can simulate it with DOF + grain)
+pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.High;
+pipeline.grain.intensity = 60;
+
 
 // Pointer lock
 canvas.addEventListener("click", () => {

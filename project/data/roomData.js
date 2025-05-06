@@ -9,9 +9,9 @@ const roomData = {
                 { axis: "z", distance: 3.4 }  // Bottom wall
             ],
             actions: [
-                {name : "Paper", id: 409, output: "Look at", image: "./../assets/images/FirstMessage.png"},
-                {name : "Door", id: 39, output: "open", goal: "room2"},
-                {name : "Door", id: 37, output: "open",goal: "room2"}
+                {name : "Paper", id: 404, output: "Look at", image: "./../assets/images/FirstMessage.png"},
+                {name : "Door", id: 32, output: "open", goal: "room2"},
+                {name : "Door", id: 34, output: "open",goal: "room2"}
             ],
 
             model: "./../3d_assets/room1V1.glb"
@@ -37,7 +37,7 @@ const roomData = {
                 { axis: "z", distance: 14 }  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 714, output: "open", goal: "room3",},
+                {name: "Door", id: 709, output: "open", goal: "room3",},
             ],
             model: "./../3d_assets/room2V1.glb",
             position: { x: 0, y: 1.7, z: -2.2}
