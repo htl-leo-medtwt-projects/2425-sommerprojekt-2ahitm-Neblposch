@@ -13,6 +13,12 @@ const roomData = {
                 {name : "Door", id: 32, output: "open", goal: "room2"},
                 {name : "Door", id: 34, output: "open",goal: "room2"}
             ],
+            lights: [
+                {position: { x: 2.8, y: 3.3, z: -2.7 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: -0.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: 1.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: 3.5 }, color: [0.8, 0.8, 0.8], intensity: 1}
+            ],
 
             model: "./../3d_assets/room1V1.glb"
         },
@@ -38,6 +44,13 @@ const roomData = {
             ],
             actions: [
                 {name: "Door", id: 709, output: "open", goal: "room3",},
+            ],
+            lights: [
+                {position: { x: 2.8, y: 3.3, z: -2.7 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: -0.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: 1.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: 3.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                {position: { x: 2.8, y: 3.3, z: 6.8 }, color: [0.8, 0.8, 0.8], intensity: 1}
             ],
             model: "./../3d_assets/room2V1.glb",
             position: { x: 0, y: 1.7, z: -2.2}

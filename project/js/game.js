@@ -94,7 +94,6 @@ class FirstPersonCamera {
 }
 
 let currentRoom = null; // Global variable to store the current room's JSON
-loadRoom("room1"); // Load the initial room
 
 const camera = new BABYLON.UniversalCamera("fpsCamera", new BABYLON.Vector3(0, 1.7, 0), scene);
 camera.attachControl(canvas, false);
@@ -110,63 +109,25 @@ light.specular = new BABYLON.Color3(1, 0, 0);
 light.groundColor = new BABYLON.Color3(0, 0, 0);
 light.intensity = overallBrightness;
 
-const pointLight1 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -2.7), scene);
-pointLight1.diffuse = new BABYLON.Color3(1, 0, 0);
-pointLight1.specular = new BABYLON.Color3(0, 1, 0);
-pointLight1.intensity = brightnessFirstRoom;
+let currentlightPosition;
 
-const pointLight2 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, -0.5), scene);
-pointLight2.diffuse = new BABYLON.Color3(1, 0, 0);
-pointLight2.specular = new BABYLON.Color3(0, 1, 0);
-pointLight2.intensity = brightnessFirstRoom;
-
-const pointLight3 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 1.5), scene);
-pointLight3.diffuse = new BABYLON.Color3(1, 0, 0);
-pointLight3.specular = new BABYLON.Color3(0, 1, 0);
-pointLight3.intensity = brightnessFirstRoom;
-
-const pointLight4 = new BABYLON.PointLight("greenPointLight", new BABYLON.Vector3(2.8, 3.3, 3.5), scene);
-pointLight4.diffuse = new BABYLON.Color3(1, 0, 0);
-pointLight4.specular = new BABYLON.Color3(0, 1, 0);
-pointLight4.intensity = brightnessFirstRoom;
+loadRoom("room1"); // Load the initial room
 
 
-/*
-// Post-process effects
-const pipeline = new BABYLON.DefaultRenderingPipeline(
-    "defaultPipeline",
-    true, // Enable HDR
-    scene,
-    [camera] // Apply to the camera
-);
+function reloadLights(){
+    currentRoom.lights.forEach((z, index) => {
 
-var motionblur = new BABYLON.MotionBlurPostProcess(
-    "mb", // The name of the effect.
-    scene, // The scene containing the objects to blur according to their velocity.
-    1.0, // The required width/height ratio to downsize to before computing the render pass.
-    camera // The camera to apply the render pass to.
-);
+        currentlightPosition = currentRoom.lights[index].position;
 
-// Depth of Field
-pipeline.depthOfFieldEnabled = true;
-pipeline.depthOfField.focalLength = 10;
-pipeline.depthOfField.focusDistance = 600;
-pipeline.depthOfField.fStop = 1.4;
-pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
+        const light = new BABYLON.PointLight(`greenPointLight_${index}`, new BABYLON.Vector3(currentlightPosition.x, currentlightPosition.y, currentlightPosition.z), scene);
+        light.diffuse = new BABYLON.Color3(1, 0, 0);
+        light.specular = new BABYLON.Color3(0, 1, 0);
+        light.intensity = brightnessFirstRoom;
+    });
+}
 
-// Vignette
-pipeline.imageProcessingEnabled = true;
-pipeline.imageProcessing.vignetteEnabled = true;
-pipeline.imageProcessing.vignetteWeight = 1.5;
-pipeline.imageProcessing.vignetteColor = new BABYLON.Color4(0, 0, 0, 1);
-pipeline.imageProcessing.vignetteBlendMode = BABYLON.ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY;
 
-// Anti-Aliasing (MSAA)
-pipeline.samples = 16; // Enable 4x MSAA
 
-// Anti-Aliasing (FXAA)
-const fxaa = new BABYLON.FxaaPostProcess("fxaa", 1.0, camera);
-*/
 
 // Create the default rendering pipeline
 const pipeline = new BABYLON.DefaultRenderingPipeline(
@@ -496,6 +457,13 @@ function loadRoom(roomId) {
             mesh.dispose();
         }
     });
+
+    scene.lights.forEach(light => {
+            light.dispose();
+    })
+
+    reloadLights();
+
     // Set camera position if the room has a position attribute
     if (room.position) {
         camera.position = new BABYLON.Vector3(room.position.x, room.position.y, room.position.z);
@@ -508,7 +476,6 @@ function loadRoom(roomId) {
 
         // Update wall collision data
         updateCollisions(room.walls);
-
 
     });
 }
