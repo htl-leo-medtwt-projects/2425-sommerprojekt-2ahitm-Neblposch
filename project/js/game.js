@@ -3,6 +3,8 @@ import roomData from './../data/roomData.js';
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 
+
+
 const customLoadingScreen = {
     displayLoadingUI: function () {
         document.getElementById("loadingScreen").style.display = "flex";
@@ -23,6 +25,16 @@ scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
 scene.environmentTexture = null;
 scene.environmentIntensity = 0;
+
+
+const coneMaterial = new BABYLON.StandardMaterial("sharedConeMaterial", scene);
+coneMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);       // Red color
+coneMaterial.alpha = 0.5;                                     // Half transparent
+coneMaterial.emissiveColor = new BABYLON.Color3(1, 0, 0);     // Glowing red
+coneMaterial.specularColor = new BABYLON.Color3(0, 0, 0);     // No reflections
+coneMaterial.backFaceCulling = false;                         // Render both sides of the cone
+
+
 
 const KEYS = { 'w': 87, 'a': 65, 's': 83, 'd': 68 };
 
@@ -131,13 +143,16 @@ loadRoom("room2"); // Load the initial room
 
 
 function reloadLights(){
+    scene.lights.forEach(light => {
+        light.dispose();
+    })
     currentRoom.lights.forEach((z, index) => {
 
         currentlightPosition = currentRoom.lights[index].position;
 
-        const light = new BABYLON.PointLight(`greenPointLight_${index}`, new BABYLON.Vector3(currentlightPosition.x, currentlightPosition.y, currentlightPosition.z), scene);
+        const light = new BABYLON.PointLight(`redPointLight_${index}`, new BABYLON.Vector3(currentlightPosition.x, currentlightPosition.y, currentlightPosition.z), scene);
         light.diffuse = new BABYLON.Color3(1, 0, 0);
-        light.specular = new BABYLON.Color3(0, 1, 0);
+        light.specular = new BABYLON.Color3(1, 0, 0);
         light.intensity = brightnessFirstRoom;
     });
 }
@@ -451,6 +466,8 @@ engine.runRenderLoop(() => {
     scene.render();
 });
 
+
+
 function loadRoom(roomId) {
     // Find the room by ID in roomData
     const room = roomData.rooms.find(r => r.id === roomId);
@@ -477,6 +494,12 @@ function loadRoom(roomId) {
     scene.lights.forEach(light => {
             light.dispose();
     })
+    if(currentRoom.id === "room2") {
+        loadCones();
+    }else{
+        console.error("No cones :(");
+        console.error(currentRoom);
+    }
 
     reloadLights();
 
@@ -495,6 +518,26 @@ function loadRoom(roomId) {
 
     });
 }
+
+
+function loadCones(){
+    currentRoom.cones.forEach((data, index) => {
+        const cone = BABYLON.MeshBuilder.CreateCylinder(`cone_${index}`, {
+            diameterTop: 0,
+            diameterBottom: data.radius,
+            height: data.height,
+            tessellation: 32
+        }, scene);
+
+        console.error("cone set");
+
+        cone.position.set(data.position.x, data.position.y, data.position.z);
+        cone.rotation.set(data.rotation.x, data.rotation.y, data.rotation.z);
+        cone.material = coneMaterial;
+    });
+
+}
+
 
 
 

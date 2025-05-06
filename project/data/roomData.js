@@ -43,7 +43,14 @@ const roomData = {
                 { axis: "z", distance: 14 }  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 709, output: "open", goal: "room3",},
+                {name: "Door", id: 316, output: "open", goal: "room3",},
+                {name: "Door", id: 318, output: "open", goal: "room3",},
+            ],
+            cones:[
+                {position: { x: 0.75, y: 0, z: 0.7 }, rotation: { x :0, y: 0, z: -0.5}, height: 10, radius: 5 },
+                {position: { x: -0.75, y: 0, z: 6 }, rotation: { x :0, y: 0, z: 0.5}, height: 10, radius: 5 },
+                {position: { x: -8.5, y: -0.2, z: 12.3 }, rotation: { x :0.4, y: 0, z: 0}, height: 10, radius: 6 },
+                {position: { x: -8.5, y: -0.2, z: 10.2 }, rotation: { x :-0.4, y: 0, z: 0}, height: 10, radius: 6 },
             ],
             lights: [
                 //first wall
@@ -72,6 +79,9 @@ const roomData = {
             ],
             actions: [
                 {name: "Door", id: 739, output: "open", goal: "room2",},
+            ],
+            lights: [
+                {position: {x: 0, y: 2, z: 1.5}, color: [0.8, 0.8, 0.8], intensity: 1},
             ],
 
             model: "./../3d_assets/room3V1.glb",
