@@ -557,11 +557,18 @@ function updateCollisions(walls) {
     console.log("Collision data updated:", currentWalls);
 }
 
+let deathmessage = false;
 
 function handleDeath() {
     console.error("Player has died!");
     let deathScreen = document.getElementById("deathScreen");
     deathScreen.style.display = "flex";
+    let audio = document.getElementById("death");
+    audio.loop = false;
+    if (!deathmessage) {
+        audio.play();
+    }
+    deathmessage = true;
 
     // Exit pointer lock to make the cursor visible
     if (document.pointerLockElement) {

@@ -67,6 +67,9 @@ const roomData = {
                 {position: { x: -3.7, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
             ],
             model: "./../3d_assets/room2V1.glb",
+            audio: {
+                narrator: "./../assets/audio/Narrator/room2.wav"
+            },
             position: { x: 0, y: 1.7, z: -2.2}
         },
         {
