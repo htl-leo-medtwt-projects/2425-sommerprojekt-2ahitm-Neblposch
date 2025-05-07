@@ -139,7 +139,7 @@ light.intensity = overallBrightness;
 
 let currentlightPosition;
 
-loadRoom("room3"); // Load the initial room
+loadRoom("room2"); // Load the initial room
 
 
 function reloadLights(){
