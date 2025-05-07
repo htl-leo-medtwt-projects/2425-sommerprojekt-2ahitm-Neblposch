@@ -22,11 +22,11 @@ const roomData = {
             audio: {
                 Narrator: "./../assets/audio/Narrator/room1.wav",
                 NarratorTiming: [
-                    {start: 0, end: 0.7},
-                    {start: 0.8, end: 0.14},
-                    {start: 0.15, end: 0.21},
-                    {start: 0.22, end: 0.26},
-                    {start: 0.27, end: 0.34}
+                    {start: 0, end: 8},
+                    {start: 7, end: 14.5},
+                    {start: 14, end: 21},
+                    {start: 20.8, end: 27},
+                    {start: 26, end: 35}
                 ]
             },
 

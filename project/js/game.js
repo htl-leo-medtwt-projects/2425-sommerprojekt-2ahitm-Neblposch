@@ -503,7 +503,11 @@ function loadRoom(roomId) {
             light.dispose();
     })
     if(currentRoom.id === "room1") {
-        let welcome = document.getElementById("welcome");
+        let welcome = document.getElementById("room1");
+
+        playAudioSegment(welcome, room.audio.NarratorTiming[0].start, room.audio.NarratorTiming[0].end);
+
+        playAudioSegment(welcome, room.audio.NarratorTiming[1].start, room.audio.NarratorTiming[1].end);
 
     }else if(currentRoom.id === "room2") {
         loadCones();
@@ -637,4 +641,27 @@ function disposeCones() {
     });
 
     console.error("Cones disposed");
+}
+
+function playAudioSegment(audioElement, startTime, endTime) {
+    if (!audioElement || !(audioElement instanceof HTMLAudioElement)) {
+        console.error("Invalid audio element provided.");
+        return;
+    }
+
+    if (startTime < 0 || endTime <= startTime || endTime > audioElement.duration) {
+        console.error("Invalid start or end time.");
+        return;
+    }
+
+    audioElement.currentTime = startTime;
+    audioElement.play();
+
+    const stopTimeout = setTimeout(() => {
+        audioElement.pause();
+        audioElement.currentTime = 0; // Reset to the beginning if needed
+    }, (endTime - startTime) * 1000);
+
+    // Clear timeout if the audio is manually stopped
+    audioElement.addEventListener("pause", () => clearTimeout(stopTimeout), { once: true });
 }
