@@ -463,6 +463,10 @@ engine.runRenderLoop(() => {
         coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}, ${lookingAt}, ${distanceToMesh}`;
     }
 
+    checkPlayerDeath(); // Check for player death
+
+
+
     scene.render();
 });
 
@@ -552,3 +556,39 @@ function updateCollisions(walls) {
 
     console.log("Collision data updated:", currentWalls);
 }
+
+
+function handleDeath() {
+    console.error("Player has died!");
+    let deathScreen = document.getElementById("deathScreen");
+    deathScreen.style.display = "flex";
+
+    // Exit pointer lock to make the cursor visible
+    if (document.pointerLockElement) {
+        document.exitPointerLock();
+    }
+}
+
+function checkPlayerDeath() {
+    const ray = new BABYLON.Ray(
+        camera.position, // Origin of the ray (camera position)
+        new BABYLON.Vector3(0, -1, 0), // Direction of the ray (downward)
+        1.7 // Length of the ray (adjust based on player height)
+    );
+
+    const hit = scene.pickWithRay(ray);
+
+    if (hit.pickedMesh && hit.pickedMesh.name.startsWith("cone_")) {
+        handleDeath();
+    }
+}
+
+
+
+// Add this in `game.js`
+function restart() {
+    location.reload();
+}
+
+// Attach the function to the global `window` object
+window.restart = restart;
