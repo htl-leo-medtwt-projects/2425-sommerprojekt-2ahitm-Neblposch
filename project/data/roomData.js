@@ -9,9 +9,9 @@ const roomData = {
                 { axis: "z", distance: 3.4 }  // Bottom wall
             ],
             actions: [
-                {name : "Paper", id: 404, output: "Look at", image: "./../assets/images/FirstMessage.png"},
-                {name : "Door", id: 32, output: "open", goal: "room2"},
-                {name : "Door", id: 34, output: "open",goal: "room2"}
+                {name : "Paper", id: 405, output: "Look at", image: "./../assets/images/FirstMessage.png"},
+                {name : "Door", id: 33, output: "open", goal: "room2"},
+                {name : "Door", id: 35, output: "open",goal: "room2"}
             ],
             lights: [
                 {position: { x: 2.8, y: 3.3, z: -2.7 }, color: [0.8, 0.8, 0.8], intensity: 1},
@@ -19,6 +19,16 @@ const roomData = {
                 {position: { x: 2.8, y: 3.3, z: 1.5 }, color: [0.8, 0.8, 0.8], intensity: 1},
                 {position: { x: 2.8, y: 3.3, z: 3.5 }, color: [0.8, 0.8, 0.8], intensity: 1}
             ],
+            audio: {
+                Narrator: "./../assets/audio/Narrator/room1.wav",
+                NarratorTiming: [
+                    {start: 0, end: 0.7},
+                    {start: 0.8, end: 0.14},
+                    {start: 0.15, end: 0.21},
+                    {start: 0.22, end: 0.26},
+                    {start: 0.27, end: 0.34}
+                ]
+            },
 
             model: "./../3d_assets/room1V1.glb"
         },
@@ -43,8 +53,9 @@ const roomData = {
                 { axis: "z", distance: 14 }  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 316, output: "open", goal: "room3",},
-                {name: "Door", id: 318, output: "open", goal: "room3",},
+                {name: "Door", id: 725, output: "open", goal: "room3",},
+                {name: "Door", id: 727, output: "open", goal: "room3",},
+                {name: "Switch", id: 736, output: "Deactivate"},
             ],
             cones:[
                 {position: { x: 0.75, y: 0, z: 0.7 }, rotation: { x :0, y: 0, z: -0.5}, height: 10, radius: 5 },
@@ -62,9 +73,9 @@ const roomData = {
                 {position: { x: 2.8, y: 3.3, z: 9.9 }, color: [0.8, 0.8, 0.8], intensity: 1},
                 {position: { x: 2.8, y: 3.3, z: 12.9 }, color: [0.8, 0.8, 0.8], intensity: 1},
                 //second wall
-                {position: { x: 2, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
-                {position: { x: -1, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
-                {position: { x: -3.7, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                //{position: { x: 2, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                //{position: { x: -1, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
+                //{position: { x: -3.7, y: 3.3, z: 13.99 }, color: [0.8, 0.8, 0.8], intensity: 1},
             ],
             model: "./../3d_assets/room2V1.glb",
             audio: {

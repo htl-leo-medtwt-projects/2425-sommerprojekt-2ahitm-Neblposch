@@ -139,7 +139,7 @@ light.intensity = overallBrightness;
 
 let currentlightPosition;
 
-loadRoom("room2"); // Load the initial room
+loadRoom("room1"); // Load the initial room
 
 
 function reloadLights(){
@@ -425,6 +425,10 @@ engine.runRenderLoop(() => {
                                                         case "Door":
                                                             loadRoom(action.goal);
                                                             break;
+
+                                                        case "Switch":
+                                                            disposeCones();
+                                                            break;
                                                     }
                                                 }
                                             }
@@ -498,7 +502,10 @@ function loadRoom(roomId) {
     scene.lights.forEach(light => {
             light.dispose();
     })
-    if(currentRoom.id === "room2") {
+    if(currentRoom.id === "room1") {
+        let welcome = document.getElementById("welcome");
+
+    }else if(currentRoom.id === "room2") {
         loadCones();
     }else{
         console.error("No cones :(");
@@ -596,6 +603,38 @@ function checkPlayerDeath() {
 function restart() {
     location.reload();
 }
+let SwitchIsOn = false;
 
 // Attach the function to the global `window` object
 window.restart = restart;
+
+function disposeCones() {
+    const targetMesh = scene.meshes.find(mesh => mesh.uniqueId === 336);
+    if (targetMesh && !SwitchIsOn) {
+        if (targetMesh.rotationQuaternion) {
+            targetMesh.rotationQuaternion = null;
+        }
+        targetMesh.rotation.y = 1.57;
+        SwitchIsOn = true;
+    }
+
+    scene.meshes.forEach(mesh => {
+        if (mesh.name.startsWith("cone_")) {
+            mesh.dispose();
+        }
+    });
+
+    scene.meshes.forEach(mesh => {
+        if (mesh.name.startsWith("cone_")) {
+            mesh.dispose();
+        }
+    });
+
+    scene.meshes.forEach(mesh => {
+        if (mesh.name.startsWith("cone_")) {
+            mesh.dispose();
+        }
+    });
+
+    console.error("Cones disposed");
+}
