@@ -1,4 +1,5 @@
 import roomData from './../data/roomData.js';
+import audioData from './../data/Audio.js';
 
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
@@ -504,10 +505,8 @@ function loadRoom(roomId) {
     })
     if(currentRoom.id === "room1") {
         let welcome = document.getElementById("room1");
+        playAudioById(currentRoom.id)
 
-        playAudioSegment(welcome, room.audio.NarratorTiming[0].start, room.audio.NarratorTiming[0].end);
-
-        playAudioSegment(welcome, room.audio.NarratorTiming[1].start, room.audio.NarratorTiming[1].end);
 
     }else if(currentRoom.id === "room2") {
         loadCones();
@@ -643,25 +642,33 @@ function disposeCones() {
     console.error("Cones disposed");
 }
 
-function playAudioSegment(audioElement, startTime, endTime) {
-    if (!audioElement || !(audioElement instanceof HTMLAudioElement)) {
-        console.error("Invalid audio element provided.");
+function playAudioById(id) {
+    const audioElement = document.getElementById("narrator"); // Ensure the audio element exists
+    const message = audioData.messages[id];
+
+    if (!audioElement || !message) {
+        console.error("Invalid audio element or message ID.");
         return;
     }
 
-    if (startTime < 0 || endTime <= startTime || endTime > audioElement.duration) {
-        console.error("Invalid start or end time.");
+    const { start, end, delay } = message;
+
+    if (start < 0 || end <= start || end > audioElement.duration) {
+        console.error("Invalid start or end time for message ID:", id);
         return;
     }
 
-    audioElement.currentTime = startTime;
-    audioElement.play();
+    setTimeout(() => {
+        audioElement.currentTime = start;
+        audioElement.play();
 
-    const stopTimeout = setTimeout(() => {
-        audioElement.pause();
-        audioElement.currentTime = 0; // Reset to the beginning if needed
-    }, (endTime - startTime) * 1000);
+        const stopTimeout = setTimeout(() => {
+            audioElement.pause();
+            audioElement.currentTime = 0; // Reset to the beginning if needed
+        }, (end - start) * 1000);
 
-    // Clear timeout if the audio is manually stopped
-    audioElement.addEventListener("pause", () => clearTimeout(stopTimeout), { once: true });
+        // Clear timeout if the audio is manually stopped
+        audioElement.addEventListener("pause", () => clearTimeout(stopTimeout), { once: true });
+    }, delay * 1000);
 }
+
