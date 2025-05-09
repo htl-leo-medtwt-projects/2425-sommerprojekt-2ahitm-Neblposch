@@ -1,8 +1,8 @@
 const audioData = {
     messages: {
         room1: { start: 0, end: 24, delay: 1 },
-        message2: { start: 6, end: 10, delay: 2 },
-        message3: { start: 11, end: 15, delay: 1 },
+        room2: { start: 25, end: 54, delay: 1 },
+        room3: { start: 55, end: 67, delay: 10 },
     },
     audioFile: "./../assets/audio/Narrator/GameAudio_mixdown.mp3"
 };

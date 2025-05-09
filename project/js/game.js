@@ -130,23 +130,27 @@ camera.speed = 0;
 camera.inputs.clear();
 
 let brightnessFirstRoom = 7;
-let overallBrightness = 0.05;
-
-const light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 0, 0), scene);
-light.diffuse = new BABYLON.Color3(1, 1, 1);
-light.specular = new BABYLON.Color3(1, 0, 0);
-light.groundColor = new BABYLON.Color3(0, 0, 0);
-light.intensity = overallBrightness;
-
+let overallBrightness = 0.06;
 let currentlightPosition;
-
 loadRoom("room1"); // Load the initial room
 
 
+
+
+
 function reloadLights(){
+
     scene.lights.forEach(light => {
         light.dispose();
     })
+
+    let light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(255, 255, 255), scene);
+    light.diffuse = new BABYLON.Color3(1, 0.5, 0.5);
+    light.specular = new BABYLON.Color3(1, 0.5, 0.5);
+    light.groundColor = new BABYLON.Color3(1, 0.5, 0.5);
+    light.intensity = overallBrightness;
+
+
     currentRoom.lights.forEach((z, index) => {
 
         currentlightPosition = currentRoom.lights[index].position;
@@ -503,9 +507,11 @@ function loadRoom(roomId) {
     scene.lights.forEach(light => {
             light.dispose();
     })
+
+    playAudioById(currentRoom.id);
+
     if(currentRoom.id === "room1") {
         let welcome = document.getElementById("room1");
-        playAudioById(currentRoom.id)
 
 
     }else if(currentRoom.id === "room2") {
