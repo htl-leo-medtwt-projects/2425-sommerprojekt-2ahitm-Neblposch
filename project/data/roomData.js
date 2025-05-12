@@ -53,9 +53,9 @@ const roomData = {
                 { axis: "z", distance: 14 }  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 725, output: "open", goal: "room3",},
-                {name: "Door", id: 727, output: "open", goal: "room3",},
-                {name: "Switch", id: 736, output: "Deactivate"},
+                {name: "Door", id: 726, output: "open", goal: "room3",},
+                {name: "Door", id: 728, output: "open", goal: "room3",},
+                {name: "Switch", id: 737, output: "Deactivate"},
             ],
             cones:[
                 {position: { x: 0.75, y: 0, z: 0.7 }, rotation: { x :0, y: 0, z: -0.5}, height: 10, radius: 5 },
@@ -92,13 +92,22 @@ const roomData = {
                 { axis: "z", distance: 5.5}  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 739, output: "open", goal: "room2",},
+                {name: "Door", id: 772, output: "open", goal: "room4",},
+                {name: "Door", id: 774, output: "open", goal: "room4",}
+            ],
+            PreasurePlates: [
+                {id: 786, type: false},
+                {id: 776, type: true},
+                {id: 780, type: false},
+                {id: 782, type: false},
+                {id: 784, type: false},
             ],
             lights: [
-                {position: {x: 0, y: 2, z: 1.5}, color: [0.8, 0.8, 0.8], intensity: 1},
+
+                {position: { x: 2.8, y: 3.3, z: -2.7 }, color: [0.8, 0.8, 0.8], intensity: 1}
             ],
 
-            model: "./../3d_assets/room3V1.glb",
+            model: "./../3d_assets/room3V2.glb",
             position: { x: 0, y: 1.7, z: -3.8}
         }
 

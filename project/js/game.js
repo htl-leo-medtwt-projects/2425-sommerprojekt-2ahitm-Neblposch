@@ -143,6 +143,21 @@ function reloadLights(){
     scene.lights.forEach(light => {
         light.dispose();
     })
+    scene.lights.forEach(light => {
+        light.dispose();
+    })
+    scene.lights.forEach(light => {
+        light.dispose();
+    })
+    scene.lights.forEach(light => {
+        light.dispose();
+    })
+    scene.lights.forEach(light => {
+        light.dispose();
+    })
+    scene.lights.forEach(light => {
+        light.dispose();
+    })
 
     let light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(255, 255, 255), scene);
     light.diffuse = new BABYLON.Color3(1, 0.5, 0.5);
@@ -369,6 +384,8 @@ engine.runRenderLoop(() => {
 
     scene.render();
 });
+let doorUnlocked = false;
+
 
 engine.runRenderLoop(() => {
     const currentTime = performance.now();
@@ -516,6 +533,7 @@ function loadRoom(roomId) {
 
     }else if(currentRoom.id === "room2") {
         loadCones();
+    }else if(currentRoom.id === "room3") {
     }else{
         console.error("No cones :(");
         console.error(currentRoom);
@@ -592,20 +610,44 @@ function handleDeath() {
     }
 }
 
+
 function checkPlayerDeath() {
-    const ray = new BABYLON.Ray(
-        camera.position, // Origin of the ray (camera position)
-        new BABYLON.Vector3(0, -1, 0), // Direction of the ray (downward)
-        1.7 // Length of the ray (adjust based on player height)
-    );
+    if(currentRoom.id === "room2") {
+        const ray = new BABYLON.Ray(
+            camera.position, // Origin of the ray (camera position)
+            new BABYLON.Vector3(0, -1, 0), // Direction of the ray (downward)
+            1.7 // Length of the ray (adjust based on player height)
+        );
 
-    const hit = scene.pickWithRay(ray);
+        const hit = scene.pickWithRay(ray);
 
-    if (hit.pickedMesh && hit.pickedMesh.name.startsWith("cone_")) {
-        handleDeath();
+        if (hit.pickedMesh && hit.pickedMesh.name.startsWith("cone_")) {
+            handleDeath();
+        }
+    }else if (currentRoom.id === "room3") {
+        const ray = new BABYLON.Ray(
+            camera.position, // Origin of the ray (camera position)
+            new BABYLON.Vector3(0, -1, 0), // Direction of the ray (downward)
+            1.7 // Length of the ray (adjust based on player height)
+        );
+
+        const hit = scene.pickWithRay(ray);
+
+        if (hit.pickedMesh) {
+            const plate = currentRoom.PreasurePlates.find(p => p.id === hit.pickedMesh.uniqueId);
+
+            if (plate) {
+                if (!plate.type) {
+                    handleDeath(); // Player dies if the plate type is false
+                } else {
+                    doorUnlocked = true; // Unlock the door if the plate type is true
+                    console.log("Door unlocked!");
+                }
+            }
+        }
     }
-}
 
+}
 
 
 // Add this in `game.js`
