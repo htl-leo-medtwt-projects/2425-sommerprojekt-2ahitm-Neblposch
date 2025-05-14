@@ -1,10 +1,43 @@
 import roomData from './../data/roomData.js';
 import audioData from './../data/Audio.js';
 
+const startVideo = document.getElementById("start-video");
 const canvas = document.getElementById("renderCanvas");
+
+// Hide the canvas while the video is playing
+canvas.style.display = "none";
+
+// Play the video and listen for the end event
+startVideo.play();
+startVideo.addEventListener("ended", () => {
+    startVideo.style.display = "none"; // Hide the video
+    canvas.style.display = "block";   // Show the game canvas
+    engine.resize();                  // Resize the engine to fit the canvas
+});
+
+
+
+
+const fadeOverlay = document.getElementById("fade-overlay");
+
+startVideo.addEventListener("ended", () => {
+    fadeOverlay.style.display = "block"; // Show the overlay
+    fadeOverlay.style.opacity = 1; // Fade to black
+
+    setTimeout(() => {
+        startVideo.style.display = "none"; // Hide the video
+        fadeOverlay.style.opacity = 0; // Fade back to gameplay
+        canvas.style.display = "block"; // Show the game canvas
+        engine.resize(); // Resize the engine to fit the canvas
+
+        setTimeout(() => {
+            fadeOverlay.style.display = "none"; // Hide the overlay
+        }, 1000); // Wait for the fade-out animation to complete
+    }, 1000); // Wait for the fade-in animation to complete
+});
+
+
 const engine = new BABYLON.Engine(canvas, true);
-
-
 
 const customLoadingScreen = {
     displayLoadingUI: function () {
@@ -128,6 +161,7 @@ const camera = new BABYLON.UniversalCamera("fpsCamera", new BABYLON.Vector3(0, 1
 camera.attachControl(canvas, false);
 camera.speed = 0;
 camera.inputs.clear();
+camera.fov = 1.2;
 
 let brightnessFirstRoom = 7;
 let overallBrightness = 0.06;

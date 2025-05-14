@@ -135,3 +135,27 @@ canvas {
     font-size: 30vh;
     z-index: 9999;
 }
+
+#start-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 10000;
+    display: block;
+}
+
+#fade-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    z-index: 10001;
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
