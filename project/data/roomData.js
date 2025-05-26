@@ -30,7 +30,7 @@ const roomData = {
                 ]
             },
 
-            model: "./../3d_assets/room1V1.glb"
+            model: "./../3d_assets/room1V2.glb"
         },
         {
             id: "room2",

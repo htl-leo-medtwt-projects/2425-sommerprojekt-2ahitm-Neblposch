@@ -411,6 +411,7 @@ engine.runRenderLoop(() => {
         const hit = scene.pickWithRay(ray);
         if (hit.pickedMesh) {
             coordinatesDiv.innerText += `, Looking at Mesh ID: ${hit.pickedMesh.uniqueId}`;
+            coordinatesDiv.innerText+= `, Door??? ${hit.metadata}`;
         } else {
             coordinatesDiv.innerText += `, Looking at: None`;
         }
@@ -520,7 +521,8 @@ engine.runRenderLoop(() => {
         }
 
         // Update coordinates div
-        coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}, ${lookingAt}, ${distanceToMesh}`;
+        coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}, ${lookingAt}, ${distanceToMesh}, Metadata: ${hit.pickedMesh ? hit.pickedMesh.metadata : "N/A"}`;
+
     }
 
     checkPlayerDeath(); // Check for player death
