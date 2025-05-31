@@ -92,7 +92,7 @@ const roomData = {
                 { axis: "z", distance: 5.5}  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 772, output: "open", goal: "room4",},
+                {name: "Door", id: 773, output: "open", goal: "room4",},
                 {name: "Door", id: 774, output: "open", goal: "room4",}
             ],
             PreasurePlates: [
@@ -108,6 +108,25 @@ const roomData = {
             ],
 
             model: "./../3d_assets/room3V2.glb",
+            position: { x: 0, y: 1.7, z: -3.8}
+        },
+        {
+            id: "room4",
+            walls: [
+                { axis: "x", distance: -5.5},  // Left wall
+                { axis: "x", distance: 5.5}, // Right wall
+                { axis: "z", distance: -5.5}, // Top wall
+                { axis: "z", distance: 5.5}  // Bottom wall
+            ],
+            actions: [
+                {name: "Door", id: 772, output: "open", goal: "room3",},
+                {name: "Door", id: 774, output: "open", goal: "room3",}
+            ],
+            lights: [
+                {position: { x: 2.8, y: 3.3, z: -2.7 }, color: [0.8, 0.8, 0.8], intensity: 1}
+            ],
+
+            model: "./../3d_assets/room4V1.glb",
             position: { x: 0, y: 1.7, z: -3.8}
         }
 

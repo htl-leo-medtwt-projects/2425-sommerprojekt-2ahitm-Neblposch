@@ -103,9 +103,9 @@ class FirstPersonCamera {
         this.input = new InputController();
         this.phi = 0;
         this.theta = 0;
-        this.speed = 0.015;
+        this.speed = 0.005;
         this.velocity = new BABYLON.Vector3();
-        this.bobbingSpeed = 14;
+        this.bobbingSpeed = 8;
         this.bobbingAmount = 0.03;
         this.time = 0;
         this.originalY = this.camera.position.y;
@@ -258,7 +258,7 @@ pipeline.chromaticAberration.radialIntensity = 50.0;
 // Optionally add some blur noise manually
 // (Babylon doesn't have a direct setting called 'blur_noise', but you can simulate it with DOF + grain)
 pipeline.depthOfField.blurLevel = BABYLON.DepthOfFieldEffectBlurLevel.High;
-pipeline.grain.intensity = 90;
+pipeline.grain.intensity = 40;
 
 
 // Pointer lock
@@ -521,7 +521,12 @@ engine.runRenderLoop(() => {
         }
 
         // Update coordinates div
-        coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}, ${lookingAt}, ${distanceToMesh}, Metadata: ${hit.pickedMesh ? hit.pickedMesh.metadata : "N/A"}`;
+
+        coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}, ${lookingAt}, ${distanceToMesh}, Metadata: ${
+            hit.pickedMesh?.metadata?.gltf?.extras
+                ? JSON.stringify(hit.pickedMesh.metadata.gltf.extras)
+                : "N/A"
+        }`;
 
     }
 
@@ -536,6 +541,7 @@ engine.runRenderLoop(() => {
 
 function loadRoom(roomId) {
     // Find the room by ID in roomData
+    console.warn("Loading room with ID:", roomId);
     const room = roomData.rooms.find(r => r.id === roomId);
 
     if (!room) {
