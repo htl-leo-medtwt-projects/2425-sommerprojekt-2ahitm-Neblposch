@@ -143,7 +143,7 @@ canvas {
     width: 100vw;
     height: 100vh;
     object-fit: cover;
-    z-index: 10000;
+    z-index: 1000;
     display: block;
 }
 
@@ -158,4 +158,39 @@ canvas {
     display: none;
     opacity: 0;
     transition: opacity 1s ease-in-out;
+}
+
+#Terminal {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("./../assets/images/Terminal.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    font-family: "Courier New", Courier, monospace;
+    overflow-y: auto;
+    padding: 1em;
+    z-index: 1002;
+}
+
+#display {
+    position: absolute;
+    top: 28vh;
+    left: 38vw;
+    height: 5vh;
+    width: 30vw;
+    z-index: 1003;
+    font-size: 2em;
+    background-color: rgba(255, 255, 255, 0);
+    color: #74c874;
+
+    text-shadow:
+            0 0 5px #00ff00,
+            0 0 10px #00ff00,
+            0 0 20px #00ff00,
+            0 0 40px #00ff00;
 }

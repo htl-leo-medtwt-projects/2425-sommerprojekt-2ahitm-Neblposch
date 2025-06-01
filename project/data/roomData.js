@@ -92,15 +92,15 @@ const roomData = {
                 { axis: "z", distance: 5.5}  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 773, output: "open", goal: "room4",},
-                {name: "Door", id: 774, output: "open", goal: "room4",}
+                {name: "Door", id: 9999, output: "open", goal: "room4",},
+                {name: "Door", id: 9998, output: "open", goal: "room4",}
             ],
             PreasurePlates: [
-                {id: 786, type: false},
-                {id: 776, type: true},
-                {id: 780, type: false},
-                {id: 782, type: false},
-                {id: 784, type: false},
+                {id: 787, type: false},
+                {id: 777, type: true},
+                {id: 781, type: false},
+                {id: 783, type: false},
+                {id: 785, type: false},
             ],
             lights: [
 
@@ -119,14 +119,16 @@ const roomData = {
                 { axis: "z", distance: 5.5}  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 772, output: "open", goal: "room3",},
-                {name: "Door", id: 774, output: "open", goal: "room3",}
+                {name: "Door", id: 863, output: "open", goal: "room3",},
+                {name: "Door", id: 865, output: "open", goal: "room3",},
+                {name: "Terminal", id: 1054, output: "use"},
+                {name : "Paper", id: 1020, output: "Look at", image: "./../assets/images/newspaper.png"}
             ],
             lights: [
                 {position: { x: 2.8, y: 3.3, z: -2.7 }, color: [0.8, 0.8, 0.8], intensity: 1}
             ],
 
-            model: "./../3d_assets/room4V1.glb",
+            model: "./../3d_assets/Room4V2.glb",
             position: { x: 0, y: 1.7, z: -3.8}
         }
 

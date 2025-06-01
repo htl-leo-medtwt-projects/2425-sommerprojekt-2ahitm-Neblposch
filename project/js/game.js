@@ -682,14 +682,51 @@ function checkPlayerDeath() {
                 if (!plate.type) {
                     handleDeath(); // Player dies if the plate type is false
                 } else {
-                    doorUnlocked = true; // Unlock the door if the plate type is true
+                    doorUnlocked = true; // Unlock the door
                     console.log("Door unlocked!");
+
+                    // Update both door parts in roomData
+                    const doorPart1 = currentRoom.actions.find(action => action.name === "Door" && action.id === 9999);
+                    const doorPart2 = currentRoom.actions.find(action => action.name === "Door" && action.id === 9998);
+
+                    if (doorPart1) {
+                        doorPart1.id = 773; // Set the actual mesh ID for part 1
+                        console.log(`Door Part 1 ID updated to: ${doorPart1.id}`);
+                    }
+
+                    if (doorPart2) {
+                        doorPart2.id = 774; // Set the actual mesh ID for part 2
+                        console.log(`Door Part 2 ID updated to: ${doorPart2.id}`);
+                    }
                 }
             }
         }
     }
 
 }
+
+function handleDoorInteraction(doorId) {
+    if (doorUnlocked) {
+        const doorAction = currentRoom.actions.find(action => action.id === doorId && action.name === "Door");
+        if (doorAction) {
+            loadRoom(doorAction.goal); // Load the next room
+        }
+    } else {
+        console.log("The door is locked. Step on the correct pressure plate to unlock it.");
+    }
+}
+
+// Attach the door interaction to the "E" key
+document.addEventListener("keydown", e => {
+    if (e.key === "e" || e.key === "E") {
+        const forward = camera.getForwardRay();
+        const hit = scene.pickWithRay(forward);
+
+        if (hit.pickedMesh) {
+            handleDoorInteraction(hit.pickedMesh.uniqueId);
+        }
+    }
+});
 
 
 // Add this in `game.js`
