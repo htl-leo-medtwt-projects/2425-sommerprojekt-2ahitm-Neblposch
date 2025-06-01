@@ -119,8 +119,8 @@ const roomData = {
                 { axis: "z", distance: 5.5}  // Bottom wall
             ],
             actions: [
-                {name: "Door", id: 863, output: "open", goal: "room3",},
-                {name: "Door", id: 865, output: "open", goal: "room3",},
+                {name: "Door", id: 9997, output: "open", goal: "room3",},
+                {name: "Door", id: 9996, output: "open", goal: "room3",},
                 {name: "Terminal", id: 1054, output: "use"},
                 {name : "Paper", id: 1020, output: "Look at", image: "./../assets/images/newspaper.png"}
             ],

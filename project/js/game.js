@@ -424,6 +424,7 @@ let doorUnlocked = false;
 let terminalAttempts = 0;
 const maxAttempts = 4;
 const correctCode = "2077";
+
 let enteredCode = "";
 
 function handleTerminalInput(e) {
@@ -439,7 +440,25 @@ function handleTerminalInput(e) {
     if (enteredCode.length === 4) {
         if (enteredCode === correctCode) {
             unlockTerminalDoor();
-        } else {
+        }else if(enteredCode === "0430") {
+
+            gameOverlay.style.display = "flex";
+            gameOverlay.innerHTML = `<img src="./../assets/Images/images.jpg" alt="${action.name}" style="height: 80vh" />`;
+            document.exitPointerLock();
+
+            setTimeout(() => {
+                terminalAttempts++;
+                if (terminalAttempts >= maxAttempts) {
+                    handleDeath();
+                } else {
+                    enteredCode = ""; // Reset only the entered code
+                    displayDiv.innerText = `When did it all end?\n  Attempts left: ${maxAttempts - terminalAttempts} \n Code: ${enteredCode}`;
+                }
+            }, 4000);
+
+        }
+
+        else {
             terminalAttempts++;
             if (terminalAttempts >= maxAttempts) {
                 handleDeath();
@@ -527,6 +546,8 @@ engine.runRenderLoop(() => {
                                                         case "Paper":
                                                             gameOverlay.style.display = "flex";
                                                             gameOverlay.innerHTML = `<img src="${action.image}" alt="${action.name}" style="height: 80vh" />`;
+                                                            document.exitPointerLock();
+
                                                             break;
 
                                                         case "Door":
@@ -554,7 +575,10 @@ engine.runRenderLoop(() => {
 // Close the popup when clicking on it
                             gameOverlay.addEventListener("click", () => {
                                 gameOverlay.style.display = "none";
+
                                 gameOverlay.innerHTML = "";
+
+                                canvas.requestPointerLock();
                             });
 
 // Close the popup when clicking outside or pressing a key
