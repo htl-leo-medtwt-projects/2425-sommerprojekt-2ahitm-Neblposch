@@ -421,6 +421,56 @@ engine.runRenderLoop(() => {
 });
 let doorUnlocked = false;
 
+let terminalAttempts = 0;
+const maxAttempts = 4;
+const correctCode = "2077";
+let enteredCode = "";
+
+function handleTerminalInput(e) {
+    const displayDiv = document.getElementById("display");
+
+    // Allow only numeric input
+    if (!isNaN(e.key) && e.key.length === 1) {
+        enteredCode += e.key;
+        displayDiv.innerText = `When did it all end?\n  Attempts left: ${maxAttempts - terminalAttempts} \n Code: ${enteredCode}`;
+    }
+
+    // Check if 4 digits are entered
+    if (enteredCode.length === 4) {
+        if (enteredCode === correctCode) {
+            unlockTerminalDoor();
+        } else {
+            terminalAttempts++;
+            if (terminalAttempts >= maxAttempts) {
+                handleDeath();
+            } else {
+                enteredCode = ""; // Reset only the entered code
+                displayDiv.innerText = `When did it all end?\n  Attempts left: ${maxAttempts - terminalAttempts} \n Code: ${enteredCode}`;
+            }
+        }
+    }
+}
+
+function unlockTerminalDoor() {
+    const displayDiv = document.getElementById("display");
+    const terminalDiv = document.getElementById("Terminal");
+
+    // Update door IDs
+    const doorPart1 = currentRoom.actions.find(action => action.name === "Door" && action.id === 9997);
+    const doorPart2 = currentRoom.actions.find(action => action.name === "Door" && action.id === 9996);
+
+    if (doorPart1) doorPart1.id = 863;
+    if (doorPart2) doorPart2.id = 865;
+
+    displayDiv.innerText = "Access Granted!";
+    setTimeout(() => {
+        terminalDiv.style.display = "none";
+    }, 2000);
+
+    // Remove event listener after success
+    document.removeEventListener("keydown", handleTerminalInput);
+}
+
 
 engine.runRenderLoop(() => {
     const currentTime = performance.now();
@@ -486,6 +536,13 @@ engine.runRenderLoop(() => {
                                                         case "Switch":
                                                             disposeCones();
                                                             break;
+
+                                                        case "Terminal":
+                                                            let terminalContent = document.getElementById("Terminal");
+                                                            terminalContent.style.display = "block";
+                                                            document.addEventListener("keydown", handleTerminalInput);
+                                                            break;
+
                                                     }
                                                 }
                                             }

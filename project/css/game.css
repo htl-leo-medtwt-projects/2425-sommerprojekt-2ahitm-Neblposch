@@ -175,6 +175,7 @@ canvas {
     overflow-y: auto;
     padding: 1em;
     z-index: 1002;
+    display: none;
 }
 
 #display {
