@@ -166,6 +166,14 @@ camera.fov = 1.2;
 let brightnessFirstRoom = 7;
 let overallBrightness = 0.06;
 let currentlightPosition;
+
+let queuedRoomId = null;
+let pendingRoomId = null;
+let cameFromHallway = false;
+let justCameFromHallway = false;
+
+
+
 loadRoom("room1"); // Load the initial room
 
 
@@ -619,66 +627,79 @@ engine.runRenderLoop(() => {
 });
 
 
-
 function loadRoom(roomId) {
-    // Find the room by ID in roomData
     console.warn("Loading room with ID:", roomId);
-    const room = roomData.rooms.find(r => r.id === roomId);
 
+    // Handle hallway tracking
+    justCameFromHallway = (roomId === "Hallway");
+
+    const room = roomData.rooms.find(r => r.id === roomId);
     if (!room) {
         console.error(`Room with ID ${roomId} not found.`);
         return;
     }
 
-    currentRoom = room; // Update the global variable with the current room's JSON
+    currentRoom = room;
 
-    if (!room.model) {
-        console.error(`No model defined for room with ID ${roomId}.`);
-        return;
-    }
-
-    // Remove all current meshes from the scene
+    // Clear scene (except camera)
     scene.meshes.forEach(mesh => {
         if (mesh.name !== "fpsCamera") {
             mesh.dispose();
         }
     });
-
-    scene.lights.forEach(light => {
-            light.dispose();
-    })
+    scene.lights.forEach(light => light.dispose());
 
     playAudioById(currentRoom.id);
 
-    if(currentRoom.id === "room1") {
+    // Room-specific logic
+    if (room.id === "room1") {
         let welcome = document.getElementById("room1");
-
-
-    }else if(currentRoom.id === "room2") {
+    } else if (room.id === "room2") {
         loadCones();
-    }else if(currentRoom.id === "room3") {
-    }else{
-        console.error("No cones :(");
-        console.error(currentRoom);
+    } else if (room.id === "room3") {
+        // custom logic for room3
+    } else {
+        console.warn("No custom logic for:", room.id);
     }
 
     reloadLights();
 
-    // Set camera position if the room has a position attribute
+    // Position camera
     if (room.position) {
         camera.position = new BABYLON.Vector3(room.position.x, room.position.y, room.position.z);
-        console.error(`Camera position set to: ${camera.position}`);
+        console.log(`Camera position set to: ${camera.position}`);
     }
 
-    // Load the model for the room
+    // Load the 3D model for this room
     BABYLON.SceneLoader.Append("./../3d_assets/", room.model, scene, function () {
         console.log(`Model ${room.model} for room ${roomId} loaded.`);
 
-        // Update wall collision data
         updateCollisions(room.walls);
 
+        // Attach door logic after model loads
+        scene.meshes.forEach(mesh => {
+            if (mesh.metadata && mesh.metadata === "ExitDoorCorridor") {
+                mesh.actionManager = new BABYLON.ActionManager(scene);
+                mesh.actionManager.registerAction(
+                    new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                        if (!justCameFromHallway) {
+                            // Step 1: Save the target room ID (door name should match it!)
+                            queuedRoomId = mesh.name;
+                            console.log(`Going into hallway. Next room will be: ${queuedRoomId}`);
+                            loadRoom("Hallway");
+                        } else if (queuedRoomId) {
+                            // Step 2: We're in the hallway and clicking the second door
+                            console.log(`Exiting hallway into: ${queuedRoomId}`);
+                            loadRoom(queuedRoomId);
+                            queuedRoomId = null;
+                        }
+                    })
+                );
+            }
+        });
     });
 }
+
 
 
 function loadCones(){
