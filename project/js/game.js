@@ -103,7 +103,7 @@ class FirstPersonCamera {
         this.input = new InputController();
         this.phi = 0;
         this.theta = 0;
-        this.speed = 0.005;
+        this.speed = 0.025;
         this.velocity = new BABYLON.Vector3();
         this.bobbingSpeed = 8;
         this.bobbingAmount = 0.03;
@@ -164,17 +164,14 @@ camera.inputs.clear();
 camera.fov = 1.2;
 
 let brightnessFirstRoom = 7;
-let overallBrightness = 0.06;
+let overallBrightness = 0.1;
 let currentlightPosition;
 
-let queuedRoomId = null;
-let pendingRoomId = null;
-let cameFromHallway = false;
-let justCameFromHallway = false;
-
-
-
+let currentStopTimeout = null; // Track the stop timeout
 loadRoom("room1"); // Load the initial room
+
+scene.imageProcessingConfiguration.exposure = 3.0; // default
+scene.imageProcessingConfiguration.gammaCorrection = true; // for accurate color output
 
 
 
@@ -201,10 +198,10 @@ function reloadLights(){
         light.dispose();
     })
 
-    let light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(255, 255, 255), scene);
-    light.diffuse = new BABYLON.Color3(1, 0.5, 0.5);
+    let light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+    light.diffuse = new BABYLON.Color3(1, 0.3, 0.3);
     light.specular = new BABYLON.Color3(1, 0.5, 0.5);
-    light.groundColor = new BABYLON.Color3(1, 0.5, 0.5);
+    light.groundColor = new BABYLON.Color3(1, 0.3, 0.3);
     light.intensity = overallBrightness;
 
 
@@ -486,8 +483,8 @@ function unlockTerminalDoor() {
     const doorPart1 = currentRoom.actions.find(action => action.name === "Door" && action.id === 9997);
     const doorPart2 = currentRoom.actions.find(action => action.name === "Door" && action.id === 9996);
 
-    if (doorPart1) doorPart1.id = 863;
-    if (doorPart2) doorPart2.id = 865;
+    if (doorPart1) doorPart1.id = 1067;
+    if (doorPart2) doorPart2.id = 1069;
 
     displayDiv.innerText = "Access Granted!";
     setTimeout(() => {
@@ -572,6 +569,20 @@ engine.runRenderLoop(() => {
                                                             document.addEventListener("keydown", handleTerminalInput);
                                                             break;
 
+                                                        case "Elevator":
+                                                            const endVideo = document.getElementById("end-video");
+                                                            canvas.style.display = "none"; // Hide the game canvas
+                                                            endVideo.style.display = "block"; // Show the end video
+                                                            endVideo.play();
+
+                                                            endVideo.addEventListener("ended", () => {
+                                                                // Handle what happens after the video ends
+                                                                console.log("End video finished.");
+                                                                // Optionally reload the game or navigate to another page
+                                                                location.reload();
+                                                            });
+                                                            break;
+
                                                     }
                                                 }
                                             }
@@ -627,79 +638,67 @@ engine.runRenderLoop(() => {
 });
 
 
+
 function loadRoom(roomId) {
+    // Find the room by ID in roomData
     console.warn("Loading room with ID:", roomId);
-
-    // Handle hallway tracking
-    justCameFromHallway = (roomId === "Hallway");
-
     const room = roomData.rooms.find(r => r.id === roomId);
+
     if (!room) {
         console.error(`Room with ID ${roomId} not found.`);
         return;
     }
 
-    currentRoom = room;
+    currentRoom = room; // Update the global variable with the current room's JSON
 
-    // Clear scene (except camera)
+    if (!room.model) {
+        console.error(`No model defined for room with ID ${roomId}.`);
+        return;
+    }
+
+    // Remove all current meshes from the scene
     scene.meshes.forEach(mesh => {
         if (mesh.name !== "fpsCamera") {
             mesh.dispose();
         }
     });
-    scene.lights.forEach(light => light.dispose());
+
+    scene.lights.forEach(light => {
+            light.dispose();
+    })
+
 
     playAudioById(currentRoom.id);
 
-    // Room-specific logic
-    if (room.id === "room1") {
+    if(currentRoom.id === "room1") {
         let welcome = document.getElementById("room1");
-    } else if (room.id === "room2") {
+
+
+    }else if(currentRoom.id === "room2") {
         loadCones();
-    } else if (room.id === "room3") {
-        // custom logic for room3
-    } else {
-        console.warn("No custom logic for:", room.id);
+    }else if(currentRoom.id === "room3") {
+    }else{
+        console.error("No cones :(");
+        console.error(currentRoom);
     }
 
     reloadLights();
 
-    // Position camera
+    // Set camera position if the room has a position attribute
     if (room.position) {
         camera.position = new BABYLON.Vector3(room.position.x, room.position.y, room.position.z);
-        console.log(`Camera position set to: ${camera.position}`);
+        console.error(`Camera position set to: ${camera.position}`);
     }
 
-    // Load the 3D model for this room
+    // Load the model for the room
     BABYLON.SceneLoader.Append("./../3d_assets/", room.model, scene, function () {
         console.log(`Model ${room.model} for room ${roomId} loaded.`);
 
+        // Update wall collision data
         updateCollisions(room.walls);
 
-        // Attach door logic after model loads
-        scene.meshes.forEach(mesh => {
-            if (mesh.metadata && mesh.metadata === "ExitDoorCorridor") {
-                mesh.actionManager = new BABYLON.ActionManager(scene);
-                mesh.actionManager.registerAction(
-                    new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
-                        if (!justCameFromHallway) {
-                            // Step 1: Save the target room ID (door name should match it!)
-                            queuedRoomId = mesh.name;
-                            console.log(`Going into hallway. Next room will be: ${queuedRoomId}`);
-                            loadRoom("Hallway");
-                        } else if (queuedRoomId) {
-                            // Step 2: We're in the hallway and clicking the second door
-                            console.log(`Exiting hallway into: ${queuedRoomId}`);
-                            loadRoom(queuedRoomId);
-                            queuedRoomId = null;
-                        }
-                    })
-                );
-            }
-        });
     });
 }
-
 
 
 function loadCones(){
@@ -792,12 +791,12 @@ function checkPlayerDeath() {
                     const doorPart2 = currentRoom.actions.find(action => action.name === "Door" && action.id === 9998);
 
                     if (doorPart1) {
-                        doorPart1.id = 773; // Set the actual mesh ID for part 1
+                        doorPart1.id = 911; // Set the actual mesh ID for part 1
                         console.log(`Door Part 1 ID updated to: ${doorPart1.id}`);
                     }
 
                     if (doorPart2) {
-                        doorPart2.id = 774; // Set the actual mesh ID for part 2
+                        doorPart2.id = 913; // Set the actual mesh ID for part 2
                         console.log(`Door Part 2 ID updated to: ${doorPart2.id}`);
                     }
                 }
@@ -871,33 +870,45 @@ function disposeCones() {
     console.error("Cones disposed");
 }
 
+
 function playAudioById(id) {
-    const audioElement = document.getElementById("narrator"); // Ensure the audio element exists
+    const audioElement = document.getElementById("narrator");
     const message = audioData.messages[id];
 
-    if (!audioElement || !message) {
-        console.error("Invalid audio element or message ID.");
+    if (!audioElement) {
+        console.error("Audio element with id 'narrator' not found.");
+        return;
+    }
+
+    if (!message) {
+        console.error(`Message ID ${id} not found in audioData.messages.`);
         return;
     }
 
     const { start, end, delay } = message;
 
     if (start < 0 || end <= start || end > audioElement.duration) {
-        console.error("Invalid start or end time for message ID:", id);
+        console.error(`Invalid start (${start}) or end (${end}) time for message ID: ${id}`);
         return;
     }
 
+    // Clear any existing stop timeout
+    if (currentStopTimeout) {
+        clearTimeout(currentStopTimeout);
+        currentStopTimeout = null;
+    }
+
     setTimeout(() => {
+        console.warn(`Starting audio for ID: ${id} from ${start}s to ${end}s`);
         audioElement.currentTime = start;
         audioElement.play();
 
-        const stopTimeout = setTimeout(() => {
+        // Set a new stop timeout
+        currentStopTimeout = setTimeout(() => {
             audioElement.pause();
-            audioElement.currentTime = 0; // Reset to the beginning if needed
+            audioElement.currentTime = 0;
+            console.warn(`Ending audio for ID: ${id}`);
+            currentStopTimeout = null; // Reset the timeout tracker
         }, (end - start) * 1000);
-
-        // Clear timeout if the audio is manually stopped
-        audioElement.addEventListener("pause", () => clearTimeout(stopTimeout), { once: true });
     }, delay * 1000);
 }
-
