@@ -37,9 +37,10 @@ canvas {
     color: white;
     background-color: rgba(0, 0, 0, 0.5);
     font-size: 1.5em;
-    width: 10vw;
-    height: 3vh;
+    width: 0vw;
+    height: 0vh;
     z-index: 1000;
+    display: none;
 }
 
 #action{
@@ -143,7 +144,7 @@ canvas {
     width: 100vw;
     height: 100vh;
     object-fit: cover;
-    z-index: 1000;
+    z-index: 9000;
     display: block;
 }
 
@@ -194,4 +195,15 @@ canvas {
             0 0 10px #00ff00,
             0 0 20px #00ff00,
             0 0 40px #00ff00;
+}
+
+#end-video{
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 9999;
+    position: absolute;
+    display: none;
 }

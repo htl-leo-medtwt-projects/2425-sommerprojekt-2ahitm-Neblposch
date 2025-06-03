@@ -15,8 +15,22 @@ startVideo.addEventListener("ended", () => {
     engine.resize();                  // Resize the engine to fit the canvas
 });
 
+// Select elements
+const crosshair = document.getElementById('crosshair');
+const endVideo = document.getElementById('end-video');
+let ambientAudio = document.getElementById('ambient');
 
+// Function to hide crosshair
+function hideCrosshair() {
+    crosshair.style.display = 'none';
+}
 
+// Function to show crosshair
+function showCrosshair() {
+    crosshair.style.display = 'block';
+}
+
+hideCrosshair()
 
 const fadeOverlay = document.getElementById("fade-overlay");
 
@@ -32,6 +46,7 @@ startVideo.addEventListener("ended", () => {
 
         setTimeout(() => {
             fadeOverlay.style.display = "none"; // Hide the overlay
+            showCrosshair();
         }, 1000); // Wait for the fade-out animation to complete
     }, 1000); // Wait for the fade-in animation to complete
 });
@@ -94,6 +109,7 @@ class InputController {
     }
 }
 
+
 class FirstPersonCamera {
     constructor(camera, scene) {
         this.camera = camera;
@@ -103,12 +119,15 @@ class FirstPersonCamera {
         this.input = new InputController();
         this.phi = 0;
         this.theta = 0;
-        this.speed = 0.025;
+        this.speed = 0.005;
         this.velocity = new BABYLON.Vector3();
         this.bobbingSpeed = 8;
         this.bobbingAmount = 0.03;
         this.time = 0;
         this.originalY = this.camera.position.y;
+
+        this.footstepAudio = document.getElementById("steps"); // Get the footstep audio element
+        this.isMoving = false; // Track if the player is moving
     }
 
     update(deltaTime) {
@@ -129,7 +148,19 @@ class FirstPersonCamera {
         if (this.input.keys[KEYS.a]) this.velocity.addInPlace(new BABYLON.Vector3(-direction.z, 0, direction.x));
         if (this.input.keys[KEYS.d]) this.velocity.addInPlace(new BABYLON.Vector3(direction.z, 0, -direction.x));
 
-        if (!this.velocity.equals(BABYLON.Vector3.Zero())) {
+        const isCurrentlyMoving = !this.velocity.equals(BABYLON.Vector3.Zero());
+
+        // Play or stop footstep sound based on movement
+        if (isCurrentlyMoving && !this.isMoving) {
+            this.footstepAudio.play();
+            this.isMoving = true;
+        } else if (!isCurrentlyMoving && this.isMoving) {
+            this.footstepAudio.pause();
+            this.footstepAudio.currentTime = 0; // Reset the audio
+            this.isMoving = false;
+        }
+
+        if (isCurrentlyMoving) {
             this.velocity = this.velocity.normalize().scale(this.speed);
 
             const nextPosition = this.camera.position.add(this.velocity);
@@ -154,6 +185,7 @@ class FirstPersonCamera {
         this.input.mouseXDelta = this.input.mouseYDelta = 0;
     }
 }
+
 
 let currentRoom = null; // Global variable to store the current room's JSON
 
@@ -293,14 +325,14 @@ engine.runRenderLoop(() => {
     previousTime = currentTime;
 
     fpsCamera.update(deltaTime);
-
+/*
     if (coordinatesDiv) {
         const playerPosition = camera.position;
         coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}`;
 
 
     }
-
+*/
     scene.render();
 });
 
@@ -404,6 +436,8 @@ engine.runRenderLoop(() => {
 
     fpsCamera.update(deltaTime);
 
+    /*
+
     if (coordinatesDiv) {
         const playerPosition = camera.position;
         coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}`;
@@ -421,6 +455,8 @@ engine.runRenderLoop(() => {
             coordinatesDiv.innerText += `, Looking at: None`;
         }
     }
+
+     */
 
     scene.render();
 });
@@ -549,6 +585,8 @@ engine.runRenderLoop(() => {
                                                 if (action) {
                                                     switch (action.name) {
                                                         case "Paper":
+                                                            let papersound = document.getElementById("paper");
+                                                            papersound.play();
                                                             gameOverlay.style.display = "flex";
                                                             gameOverlay.innerHTML = `<img src="${action.image}" alt="${action.name}" style="height: 80vh" />`;
                                                             document.exitPointerLock();
@@ -560,6 +598,8 @@ engine.runRenderLoop(() => {
                                                             break;
 
                                                         case "Switch":
+                                                            let switchsound = document.getElementById("switch");
+                                                            switchsound.play();
                                                             disposeCones();
                                                             break;
 
@@ -574,12 +614,16 @@ engine.runRenderLoop(() => {
                                                             canvas.style.display = "none"; // Hide the game canvas
                                                             endVideo.style.display = "block"; // Show the end video
                                                             endVideo.play();
+                                                            hideCrosshair()
+                                                            ambientAudio.pause()
+                                                            document.exitPointerLock();
+
 
                                                             endVideo.addEventListener("ended", () => {
                                                                 // Handle what happens after the video ends
                                                                 console.log("End video finished.");
                                                                 // Optionally reload the game or navigate to another page
-                                                                location.reload();
+                                                                window.location.href = "./index.html"; // Redirect to the main page
                                                             });
                                                             break;
 
@@ -621,12 +665,14 @@ engine.runRenderLoop(() => {
         }
 
         // Update coordinates div
-
+/*
         coordinatesDiv.innerText = `X: ${playerPosition.x.toFixed(2)}, Z: ${playerPosition.z.toFixed(2)}, ${lookingAt}, ${distanceToMesh}, Metadata: ${
             hit.pickedMesh?.metadata?.gltf?.extras
                 ? JSON.stringify(hit.pickedMesh.metadata.gltf.extras)
                 : "N/A"
         }`;
+ */
+
 
     }
 
@@ -781,8 +827,12 @@ function checkPlayerDeath() {
 
             if (plate) {
                 if (!plate.type) {
+                    let sound = document.getElementById("switch");
+                    sound.play();
                     handleDeath(); // Player dies if the plate type is false
                 } else {
+                    let sound = document.getElementById("switch");
+                    sound.play();
                     doorUnlocked = true; // Unlock the door
                     console.log("Door unlocked!");
 

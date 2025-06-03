@@ -10,17 +10,7 @@
     <link rel="stylesheet" href="./../css/game.css">
 </head>
 <body>
-<div>
-    <video id="start-video">
-        <source src="./../assets/video/start.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <video id="end-video">
-        <source src="./../assets/video/end.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
 
-</div>
 <div id="fade-overlay"></div>
 <div id="coordinates"></div>
 <div id="action"><div id="ESign">E</div>Press</div>
@@ -47,12 +37,38 @@
     <audio id="narrator">
         <source src="./../assets/audio/Narrator/GameAudio_mixdown.mp3" type="audio/mp3">
     </audio>
+    <audio id="steps" loop>
+        <source src="./../assets/audio/fx/footsteps.mp3" type="audio/mp3">
+    </audio>
+
+    <audio id="switch">
+        <source src="./../assets/audio/fx/switch.mp3" type="audio/mp3">
+    </audio>
+
+    <audio id="paper">
+        <source src="./../assets/audio/fx/paper.mp3" type="audio/mp3">
+    </audio>
+
+    <audio id="ambient" autoplay loop>
+        <source src="./../assets/audio/Music-Ambient/ambient.mp3" type="audio/mp3">
+    </audio>
 
 
 
 
 </div>
 
+<div>
+    <video id="start-video">
+        <source src="./../assets/video/StartVideoV3.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <video id="end-video">
+        <source src="./../assets/video/endFinal.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+</div>
 
 <canvas id="renderCanvas"></canvas>
 </body>
